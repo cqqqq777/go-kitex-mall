@@ -53,3 +53,12 @@ const (
 const (
 	TokenExpiredAt = 43200
 )
+
+const (
+	IPFlagName  = "ip"
+	IPFlagValue = "0.0.0.0"
+	IPFlagUsage = "address"
+
+	PortFlagName  = "port"
+	PortFlagUsage = "port"
+)
