@@ -4,7 +4,7 @@ import "time"
 
 const (
 	MysqlDns = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
-	MongoUrl = "mongodb://%s:%s"
+	MongoUrl = "mongodb://%s:%d"
 )
 
 const (

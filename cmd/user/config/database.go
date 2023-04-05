@@ -15,7 +15,7 @@ func (c ServerConfig) GetMysqlDsn() string {
 }
 
 func (c ServerConfig) GetMongoOptions() (*options.ClientOptions, string) {
-	url := fmt.Sprintf(consts.MongoUrl, c.MongoInfo.Host, c.MongoInfo.Host)
+	url := fmt.Sprintf(consts.MongoUrl, c.MongoInfo.Host, c.MongoInfo.Port)
 	clientOptions := options.Client().ApplyURI(url)
 	credential := c.GetMongoAuth()
 	clientOptions.SetAuth(credential)
@@ -31,7 +31,7 @@ func (c ServerConfig) GetMongoAuth() options.Credential {
 
 func (c ServerConfig) GetRedisOption() *redis.Options {
 	return &redis.Options{
-		Addr:     fmt.Sprintf("%s,%s", c.RedisInfo.Host, c.RedisInfo.Port),
+		Addr:     fmt.Sprintf("%s:%d", c.RedisInfo.Host, c.RedisInfo.Port),
 		Password: c.RedisInfo.Password,
 	}
 }

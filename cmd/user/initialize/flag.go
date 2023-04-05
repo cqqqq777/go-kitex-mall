@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"flag"
+
 	"github.com/cqqqq777/go-kitex-mall/shared/consts"
 	"github.com/cqqqq777/go-kitex-mall/shared/log"
 	"github.com/cqqqq777/go-kitex-mall/shared/tools"

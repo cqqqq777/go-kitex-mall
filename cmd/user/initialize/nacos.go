@@ -2,7 +2,6 @@ package initialize
 
 import (
 	"fmt"
-
 	"net"
 	"strconv"
 
@@ -70,7 +69,6 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 		msg := fmt.Sprintf("nacos config failed err:%v", err)
 		log.Zlogger.Fatal(msg)
 	}
-
 	if config.GlobalServerConfig.Host == "" {
 		config.GlobalServerConfig.Host, err = tools.GetLocalIPv4Address()
 		if err != nil {
