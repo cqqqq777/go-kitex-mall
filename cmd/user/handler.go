@@ -211,6 +211,12 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.MallGetUser
 	resp.UserInfo.Background = userInfo.Background
 	resp.UserInfo.Signature = userInfo.Signature
 
+	// cache user info
+	err = s.Dao.CacheUserInfo(ctx, userInfo)
+	if err != nil {
+		log.Zlogger.Errorf("cache user info failed err:%s", err.Error())
+	}
+
 	return resp, nil
 }
 
@@ -234,6 +240,12 @@ func (s *UserServiceImpl) ChangeAvatar(ctx context.Context, req *user.MallChange
 	if err != nil {
 		resp.CommonResp = response.NewCommonResp(errz.ErrPublishMsgInNsq)
 		return resp, nil
+	}
+
+	// clear user info cache
+	err = s.Dao.ClearUserInfoCache(ctx, req.Id)
+	if err != nil {
+		log.Zlogger.Errorf("clear user info cache failed err:%s", err.Error())
 	}
 
 	resp.CommonResp = response.NewCommonResp(nil)
@@ -260,6 +272,12 @@ func (s *UserServiceImpl) ChangeBackground(ctx context.Context, req *user.MallCh
 	if err != nil {
 		resp.CommonResp = response.NewCommonResp(errz.ErrPublishMsgInNsq)
 		return resp, nil
+	}
+
+	// clear user info cache
+	err = s.Dao.ClearUserInfoCache(ctx, req.Id)
+	if err != nil {
+		log.Zlogger.Errorf("clear user info cache failed err:%s", err.Error())
 	}
 
 	resp.CommonResp = response.NewCommonResp(nil)

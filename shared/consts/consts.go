@@ -43,6 +43,10 @@ const (
 )
 
 const (
+	CacheExpTime = time.Second * 300
+)
+
+const (
 	CollectionUsers = "users"
 )
 

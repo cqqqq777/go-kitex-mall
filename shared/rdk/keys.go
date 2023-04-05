@@ -3,5 +3,6 @@ package rdk
 const (
 	Prefix = "GoMall:"
 
-	RKVerification = ":verification"
+	RKVerification  = ":verification"
+	RKCacheUserInfo = ":cache:user:info"
 )

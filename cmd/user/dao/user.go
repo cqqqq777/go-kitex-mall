@@ -93,3 +93,11 @@ func (u *User) ChangeBackground(ctx context.Context, id int64, background string
 	_, err := u.mdb.Collection(consts.CollectionUsers).UpdateOne(ctx, filter, update)
 	return err
 }
+
+func (u *User) CacheUserInfo(ctx context.Context, userInfo *model.UserM) error {
+	return u.rdb.SetEx(ctx, rdk.GetCacheUserInfoKey(userInfo.Id), userInfo, consts.CacheExpTime).Err()
+}
+
+func (u *User) ClearUserInfoCache(ctx context.Context, id int64) error {
+	return u.rdb.Del(ctx, rdk.GetCacheUserInfoKey(id)).Err()
+}
