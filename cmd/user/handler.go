@@ -236,7 +236,7 @@ func (s *UserServiceImpl) ChangeAvatar(ctx context.Context, req *user.MallChange
 	var msg pkg.Msg
 	msg.Id = req.Id
 	msg.Message = req.Avatar
-	msg.Type = consts.AvatarType
+	msg.Type = consts.ObjectAvatarType
 	err = s.Producer.Produce(msg)
 	if err != nil {
 		resp.CommonResp = response.NewCommonResp(errz.ErrPublishMsgInNsq)
@@ -269,7 +269,7 @@ func (s *UserServiceImpl) ChangeBackground(ctx context.Context, req *user.MallCh
 	var msg pkg.Msg
 	msg.Id = req.Id
 	msg.Message = req.Background
-	msg.Type = consts.BackgroundType
+	msg.Type = consts.ObjectBackgroundType
 	err = s.Producer.Produce(msg)
 	if err != nil {
 		resp.CommonResp = response.NewCommonResp(errz.ErrPublishMsgInNsq)
