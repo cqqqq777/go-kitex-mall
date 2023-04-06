@@ -19,3 +19,10 @@ struct User {
     4:string background
     6:string signature
 }
+
+struct Merchant {
+    1: i64 id
+    2: i64 alipay
+    3: string name
+    4: string description
+}

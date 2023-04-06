@@ -14,12 +14,12 @@ import (
 	"github.com/cqqqq777/go-kitex-mall/cmd/user/pkg"
 	"github.com/cqqqq777/go-kitex-mall/shared/consts"
 	"github.com/cqqqq777/go-kitex-mall/shared/errz"
+	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/user"
 	"github.com/cqqqq777/go-kitex-mall/shared/log"
 	"github.com/cqqqq777/go-kitex-mall/shared/middleware"
 	"github.com/cqqqq777/go-kitex-mall/shared/response"
 
 	"github.com/bwmarrin/snowflake"
-	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/user"
 	"github.com/golang-jwt/jwt"
 	"gopkg.in/gomail.v2"
 )
@@ -88,7 +88,7 @@ func (s *UserServiceImpl) GetVerification(ctx context.Context, req *user.MallVer
 	}
 	if err = s.Dao.SetVerification(ctx, req.Email, vCode); err != nil {
 		log.Zlogger.Errorf("set verification in redis failed err:%s", err.Error())
-		resp.ComonResp = response.NewCommonResp(errz.ErrInternal)
+		resp.ComonResp = response.NewCommonResp(errz.ErrUserInternal)
 		return resp, nil
 	}
 	resp.ComonResp = response.NewCommonResp(nil)
@@ -131,7 +131,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.MallUserRegist
 			return resp, nil
 		} else {
 			log.Zlogger.Errorf("create user in mysql failed err:%s" + err.Error())
-			resp.CommonResp = response.NewCommonResp(errz.ErrInternal)
+			resp.CommonResp = response.NewCommonResp(errz.ErrUserInternal)
 			return resp, nil
 		}
 	}
@@ -141,12 +141,13 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.MallUserRegist
 	}
 	if err = s.Dao.CreateUserInMongo(ctx, userM); err != nil {
 		log.Zlogger.Errorf("create user in mongodb failed err:%s" + err.Error())
-		resp.CommonResp = response.NewCommonResp(errz.ErrInternal)
+		resp.CommonResp = response.NewCommonResp(errz.ErrUserInternal)
 		return resp, nil
 	}
 
 	resp.Token, err = s.Jwt.CreateToken(middleware.CustomClaims{
-		ID: id,
+		ID:       id,
+		Identity: consts.UserIdentity,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 			ExpiresAt: time.Now().Unix() + consts.TokenExpiredAt,
@@ -158,8 +159,8 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.MallUserRegist
 		return resp, nil
 	}
 	resp.UserId = id
-
 	resp.CommonResp = response.NewCommonResp(nil)
+
 	return resp, nil
 }
 
@@ -210,6 +211,7 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.MallGetUser
 	resp.UserInfo.Avatar = userInfo.Avatar
 	resp.UserInfo.Background = userInfo.Background
 	resp.UserInfo.Signature = userInfo.Signature
+	resp.CommonResp = response.NewCommonResp(nil)
 
 	// cache user info
 	err = s.Dao.CacheUserInfo(ctx, userInfo)

@@ -67,7 +67,7 @@ func (u *User) CreateUserInMongo(ctx context.Context, user *model.UserM) error {
 
 func (u *User) GetUserByUsername(username string) (user *model.User, err error) {
 	user = new(model.User)
-	err = u.db.Model(user).First(user).Error
+	err = u.db.Model(user).Where(&model.User{Username: username}).First(user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, ErrUserNotFound
 	}

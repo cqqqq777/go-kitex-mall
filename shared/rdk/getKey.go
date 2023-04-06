@@ -9,3 +9,7 @@ func GetVerificationKey(email string) string {
 func GetCacheUserInfoKey(id int64) string {
 	return Prefix + strconv.FormatInt(id, 10) + RKCacheUserInfo
 }
+
+func GetCacheMerchantInfoKey(id int64) string {
+	return Prefix + strconv.FormatInt(id, 10) + RKCacheMerchantInfo
+}

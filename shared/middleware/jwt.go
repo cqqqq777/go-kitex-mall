@@ -3,7 +3,12 @@ package middleware
 import (
 	"context"
 	"errors"
+	"github.com/cqqqq777/go-kitex-mall/shared/consts"
+	"github.com/cqqqq777/go-kitex-mall/shared/errz"
+	"net/http"
+
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -15,12 +20,33 @@ var (
 	TokenNotFound    = errors.New("no token")
 )
 
-func JwtAuth() app.HandlerFunc {
+func JwtAuth(secretKey string) app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
+		// get token
 		token := c.Query("token")
+
+		// check token
 		if token == "" {
-			c.JSON(200, TokenNotFound)
+			c.JSON(http.StatusOK, utils.H{
+				"code": errz.CodeInvalidParam,
+				"msg":  TokenNotFound.Error(),
+			})
 		}
+		j := NewJWT(secretKey)
+		claim, err := j.ParseToken(token)
+		if err != nil {
+			c.JSON(http.StatusOK, utils.H{
+				"code": errz.CodeTokenInvalid,
+				"msg":  err.Error(),
+			})
+			c.Abort()
+			return
+		}
+
+		//set context
+		c.Set(consts.AccountID, claim.ID)
+		c.Set(consts.AccountIdentity, claim.Identity)
+		c.Next(ctx)
 	}
 }
 
@@ -29,7 +55,8 @@ type JWT struct {
 }
 
 type CustomClaims struct {
-	ID int64
+	ID       int64
+	Identity string
 	jwt.StandardClaims
 }
 
