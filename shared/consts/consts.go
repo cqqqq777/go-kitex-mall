@@ -62,3 +62,9 @@ const (
 	PortFlagName  = "port"
 	PortFlagUsage = "port"
 )
+
+const (
+	AvatarType     = "avatar"
+	BackgroundType = "background"
+	ProductType    = "product"
+)

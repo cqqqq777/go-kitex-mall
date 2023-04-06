@@ -15,6 +15,7 @@ type Producer struct {
 
 type Msg struct {
 	Id      int64  `json:"id"`
+	Type    string `json:"type"`
 	Message string `json:"message"`
 }
 
