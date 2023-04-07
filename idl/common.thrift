@@ -26,3 +26,31 @@ struct Merchant {
     3: string name
     4: string description
 }
+
+struct Image{
+    1: i16 id
+    2: string path
+}
+
+struct Product {
+    1: i64 id
+    2: i64 m_id
+    3: i64 price
+    4: string name
+    5: string description
+    6: list<Image> iamges
+    7: i64 stock
+    8: i8 status
+}
+
+struct ProductOperateInfo {
+    1: i64 sale_count
+    2: i64 comment_count
+    3: bool is_favorite
+}
+
+struct ProductDetail {
+    1: Product basic_info
+    2: Merchant merchant_info
+    3: ProductOperateInfo operate_info
+}

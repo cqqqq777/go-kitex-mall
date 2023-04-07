@@ -8,7 +8,7 @@ type User struct {
 }
 
 type UserM struct {
-	Id         int64  `bson:"user_id,omitempty"`
+	Id         int64  `bson:"_id,omitempty"`
 	Username   string `bson:"username,omitempty"`
 	Avatar     string `bson:"avatar,omitempty"`
 	Background string `bson:"background,omitempty"`
