@@ -4,7 +4,9 @@ import (
 	"fmt"
 
 	"github.com/cqqqq777/go-kitex-mall/cmd/product/config"
+	"github.com/cqqqq777/go-kitex-mall/cmd/product/model"
 
+	"github.com/bytedance/sonic"
 	"github.com/nsqio/go-nsq"
 )
 
@@ -22,4 +24,12 @@ func NewPublisher() (pro *Producer, err error) {
 		return
 	}
 	return
+}
+
+func (p *Producer) Produce(images []*model.Image) error {
+	body, err := sonic.Marshal(images)
+	if err != nil {
+		return fmt.Errorf("cannot marshal: %v", err)
+	}
+	return p.Producer.Publish(config.GlobalServerConfig.NsqInfo.Topic, body)
 }

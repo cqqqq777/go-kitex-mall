@@ -20,7 +20,6 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	handlerType := (*product.ProductService)(nil)
 	methods := map[string]kitex.MethodInfo{
 		"PublishProduct":      kitex.NewMethodInfo(publishProductHandler, newProductServicePublishProductArgs, newProductServicePublishProductResult, false),
-		"UpdateProduct":       kitex.NewMethodInfo(updateProductHandler, newProductServiceUpdateProductArgs, newProductServiceUpdateProductResult, false),
 		"DelProduct":          kitex.NewMethodInfo(delProductHandler, newProductServiceDelProductArgs, newProductServiceDelProductResult, false),
 		"ProductList":         kitex.NewMethodInfo(productListHandler, newProductServiceProductListArgs, newProductServiceProductListResult, false),
 		"ProductDetail":       kitex.NewMethodInfo(productDetailHandler, newProductServiceProductDetailArgs, newProductServiceProductDetailResult, false),
@@ -58,24 +57,6 @@ func newProductServicePublishProductArgs() interface{} {
 
 func newProductServicePublishProductResult() interface{} {
 	return product.NewProductServicePublishProductResult()
-}
-
-func updateProductHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*product.ProductServiceUpdateProductArgs)
-	realResult := result.(*product.ProductServiceUpdateProductResult)
-	success, err := handler.(product.ProductService).UpdateProduct(ctx, realArg.Req)
-	if err != nil {
-		return err
-	}
-	realResult.Success = success
-	return nil
-}
-func newProductServiceUpdateProductArgs() interface{} {
-	return product.NewProductServiceUpdateProductArgs()
-}
-
-func newProductServiceUpdateProductResult() interface{} {
-	return product.NewProductServiceUpdateProductResult()
 }
 
 func delProductHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -201,16 +182,6 @@ func (p *kClient) PublishProduct(ctx context.Context, req *product.MallPublishPr
 	_args.Req = req
 	var _result product.ProductServicePublishProductResult
 	if err = p.c.Call(ctx, "PublishProduct", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) UpdateProduct(ctx context.Context, req *product.MallUpdateProductRequest) (r *product.MallUpdateProductResponse, err error) {
-	var _args product.ProductServiceUpdateProductArgs
-	_args.Req = req
-	var _result product.ProductServiceUpdateProductResult
-	if err = p.c.Call(ctx, "UpdateProduct", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

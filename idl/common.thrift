@@ -53,4 +53,6 @@ struct ProductDetail {
     1: Product basic_info
     2: Merchant merchant_info
     3: ProductOperateInfo operate_info
+    4: i64 create_time
+    5: i64 update_time
 }

@@ -12,7 +12,6 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	PublishProduct(ctx context.Context, req *product.MallPublishProductRequest, callOptions ...callopt.Option) (r *product.MallPublishProductResponse, err error)
-	UpdateProduct(ctx context.Context, req *product.MallUpdateProductRequest, callOptions ...callopt.Option) (r *product.MallUpdateProductResponse, err error)
 	DelProduct(ctx context.Context, req *product.MallDelProductRequest, callOptions ...callopt.Option) (r *product.MallDelProductResponse, err error)
 	ProductList(ctx context.Context, req *product.MallProductListRequest, callOptions ...callopt.Option) (r *product.MallProductListResponse, err error)
 	ProductDetail(ctx context.Context, req *product.MallProductDetailRequest, callOptions ...callopt.Option) (r *product.MallProductDetailResponse, err error)
@@ -53,11 +52,6 @@ type kProductServiceClient struct {
 func (p *kProductServiceClient) PublishProduct(ctx context.Context, req *product.MallPublishProductRequest, callOptions ...callopt.Option) (r *product.MallPublishProductResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.PublishProduct(ctx, req)
-}
-
-func (p *kProductServiceClient) UpdateProduct(ctx context.Context, req *product.MallUpdateProductRequest, callOptions ...callopt.Option) (r *product.MallUpdateProductResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateProduct(ctx, req)
 }
 
 func (p *kProductServiceClient) DelProduct(ctx context.Context, req *product.MallDelProductRequest, callOptions ...callopt.Option) (r *product.MallDelProductResponse, err error) {

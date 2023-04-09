@@ -13,3 +13,15 @@ func GetCacheUserInfoKey(id int64) string {
 func GetCacheMerchantInfoKey(id int64) string {
 	return Prefix + strconv.FormatInt(id, 10) + RKCacheMerchantInfo
 }
+
+func GetCacheProductDetailKey(id int64) string {
+	return Prefix + strconv.FormatInt(id, 10) + RKCacheProductDetail
+}
+
+func GetUserFavoriteProductKey(id int64) string {
+	return Prefix + strconv.FormatInt(id, 10) + RKFavoriteProduct
+}
+
+func GetProductSale(id int64) string {
+	return Prefix + strconv.FormatInt(id, 10) + RKProductSaleNum
+}

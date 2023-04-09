@@ -14,9 +14,10 @@ const (
 	MerchantConfigFile = "./cmd/merchant/config.yaml"
 	CartConfigFile     = "./cmd/cart/config.yaml"
 	ChatConfigFile     = "./cmd/chat/config.yaml"
-	CommentConfigFile  = "./comment/user/config.yaml"
+	CommentConfigFile  = "./cmd/comment/config.yaml"
 	PayConfigFile      = "./cmd/pay/config.yaml"
-	ProductConfigFile  = "./product/user/config.yaml"
+	ProductConfigFile  = "./cmd/product/config.yaml"
+	OperateConfigFile  = "./cmd/operate/config.yaml"
 )
 
 // nacos constant
@@ -55,7 +56,7 @@ const (
 const (
 	VerificationExpTime = time.Second * 600
 
-	CacheExpTime = time.Second * 300
+	CacheExpTime = time.Second * 1800
 
 	TokenExpiredAt = 43200
 )
@@ -89,4 +90,13 @@ const (
 	AccountID = "accountID"
 
 	AccountIdentity = "accountIdentity"
+)
+
+const (
+	ApiGroup = "API_GROUP"
+
+	UserGroup     = "USER_GROUP"
+	MerchantGroup = "MERCHANT_GROUP"
+	OperateGroup  = "OPERATE_GROUP"
+	ProductGroup  = "PRODUCT_GROUP"
 )

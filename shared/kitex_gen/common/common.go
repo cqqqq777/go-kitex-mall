@@ -2432,6 +2432,8 @@ type ProductDetail struct {
 	BasicInfo    *Product            `thrift:"basic_info,1" frugal:"1,default,Product" json:"basic_info"`
 	MerchantInfo *Merchant           `thrift:"merchant_info,2" frugal:"2,default,Merchant" json:"merchant_info"`
 	OperateInfo  *ProductOperateInfo `thrift:"operate_info,3" frugal:"3,default,ProductOperateInfo" json:"operate_info"`
+	CreateTime   int64               `thrift:"create_time,4" frugal:"4,default,i64" json:"create_time"`
+	UpdateTime   int64               `thrift:"update_time,5" frugal:"5,default,i64" json:"update_time"`
 }
 
 func NewProductDetail() *ProductDetail {
@@ -2468,6 +2470,14 @@ func (p *ProductDetail) GetOperateInfo() (v *ProductOperateInfo) {
 	}
 	return p.OperateInfo
 }
+
+func (p *ProductDetail) GetCreateTime() (v int64) {
+	return p.CreateTime
+}
+
+func (p *ProductDetail) GetUpdateTime() (v int64) {
+	return p.UpdateTime
+}
 func (p *ProductDetail) SetBasicInfo(val *Product) {
 	p.BasicInfo = val
 }
@@ -2477,11 +2487,19 @@ func (p *ProductDetail) SetMerchantInfo(val *Merchant) {
 func (p *ProductDetail) SetOperateInfo(val *ProductOperateInfo) {
 	p.OperateInfo = val
 }
+func (p *ProductDetail) SetCreateTime(val int64) {
+	p.CreateTime = val
+}
+func (p *ProductDetail) SetUpdateTime(val int64) {
+	p.UpdateTime = val
+}
 
 var fieldIDToName_ProductDetail = map[int16]string{
 	1: "basic_info",
 	2: "merchant_info",
 	3: "operate_info",
+	4: "create_time",
+	5: "update_time",
 }
 
 func (p *ProductDetail) IsSetBasicInfo() bool {
@@ -2545,6 +2563,26 @@ func (p *ProductDetail) Read(iprot thrift.TProtocol) (err error) {
 					goto SkipFieldError
 				}
 			}
+		case 4:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -2599,6 +2637,24 @@ func (p *ProductDetail) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *ProductDetail) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.CreateTime = v
+	}
+	return nil
+}
+
+func (p *ProductDetail) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.UpdateTime = v
+	}
+	return nil
+}
+
 func (p *ProductDetail) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("ProductDetail"); err != nil {
@@ -2615,6 +2671,14 @@ func (p *ProductDetail) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
 			goto WriteFieldError
 		}
 
@@ -2687,6 +2751,40 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *ProductDetail) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("create_time", thrift.I64, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.CreateTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *ProductDetail) writeField5(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("update_time", thrift.I64, 5); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.UpdateTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
 func (p *ProductDetail) String() string {
 	if p == nil {
 		return "<nil>"
@@ -2709,6 +2807,12 @@ func (p *ProductDetail) DeepEqual(ano *ProductDetail) bool {
 	if !p.Field3DeepEqual(ano.OperateInfo) {
 		return false
 	}
+	if !p.Field4DeepEqual(ano.CreateTime) {
+		return false
+	}
+	if !p.Field5DeepEqual(ano.UpdateTime) {
+		return false
+	}
 	return true
 }
 
@@ -2729,6 +2833,20 @@ func (p *ProductDetail) Field2DeepEqual(src *Merchant) bool {
 func (p *ProductDetail) Field3DeepEqual(src *ProductOperateInfo) bool {
 
 	if !p.OperateInfo.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+func (p *ProductDetail) Field4DeepEqual(src int64) bool {
+
+	if p.CreateTime != src {
+		return false
+	}
+	return true
+}
+func (p *ProductDetail) Field5DeepEqual(src int64) bool {
+
+	if p.UpdateTime != src {
 		return false
 	}
 	return true

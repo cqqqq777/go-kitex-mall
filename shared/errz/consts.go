@@ -8,6 +8,8 @@ const (
 const (
 	CodeInvalidParam int64 = 10000 + iota
 	CodeTokenInvalid
+
+	CodeNoPermission
 )
 
 const (
@@ -60,4 +62,40 @@ var (
 	ErrGenerateMToken     = NewErrZ(WithCode(CodeGenerateMToken), WithMsg("generate merchant token failed"))
 	ErrWrongPwd           = NewErrZ(WithCode(CodeWrongPwd), WithMsg("wrong merchant password"))
 	ErrGetMerchantInfo    = NewErrZ(WithCode(CodeGetMerchantInfo), WithMsg("get merchant info failed"))
+)
+
+const (
+	CodeProductService int64 = 40000 + iota
+
+	CodeGenerateProductId
+	CodeCreateProduct
+	CodeNoProduct
+)
+
+var (
+	ErrProductInternal = NewErrZ(WithCode(CodeProductService), WithMsg("product service busy"))
+
+	ErrGenerateProductId = NewErrZ(WithCode(CodeGenerateProductId), WithMsg("generate product id failed"))
+	ErrCreateProduct     = NewErrZ(WithCode(CodeCreateProduct), WithMsg("create product failed"))
+	ErrNoProduct         = NewErrZ(WithCode(CodeNoProduct), WithMsg("no such product"))
+)
+
+const (
+	CodeOperateService int64 = 50000 + iota
+
+	CodeGetOperateInfo
+	CodeFavoriteProduct
+	CodeGetFavoriteStatus
+	CodeGetCommentNum
+	CodeGetSaleNum
+)
+
+var (
+	ErrOperateInternal = NewErrZ(WithCode(CodeOperateService), WithMsg("operate service busy"))
+
+	ErrGetOperateInfo    = NewErrZ(WithCode(CodeGetOperateInfo), WithMsg("get operate info failed"))
+	ErrFavoriteProduct   = NewErrZ(WithCode(CodeFavoriteProduct), WithMsg("favorite product failed"))
+	ErrGetFavoriteStatus = NewErrZ(WithCode(CodeGetFavoriteStatus), WithMsg("get user favorite status failed"))
+	ErrGetCommentNum     = NewErrZ(WithCode(CodeGetCommentNum), WithMsg("get comment num failed"))
+	ErrGetSaleNum        = NewErrZ(WithCode(CodeGetSaleNum), WithMsg("get sale num failed"))
 )

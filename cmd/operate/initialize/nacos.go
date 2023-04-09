@@ -2,28 +2,26 @@ package initialize
 
 import (
 	"fmt"
-	"net"
-	"strconv"
-
-	"github.com/cqqqq777/go-kitex-mall/cmd/product/config"
-	"github.com/cqqqq777/go-kitex-mall/shared/consts"
-	"github.com/cqqqq777/go-kitex-mall/shared/log"
-	"github.com/cqqqq777/go-kitex-mall/shared/tools"
-
 	"github.com/bwmarrin/snowflake"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/pkg/utils"
+	"github.com/cqqqq777/go-kitex-mall/cmd/operate/config"
+	"github.com/cqqqq777/go-kitex-mall/shared/consts"
+	"github.com/cqqqq777/go-kitex-mall/shared/log"
+	"github.com/cqqqq777/go-kitex-mall/shared/tools"
 	nacos "github.com/kitex-contrib/registry-nacos/registry"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"github.com/spf13/viper"
+	"net"
+	"strconv"
 )
 
 func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	v := viper.New()
-	v.SetConfigFile(consts.ProductConfigFile)
+	v.SetConfigFile(consts.OperateConfigFile)
 	if err := v.ReadInConfig(); err != nil {
 		msg := fmt.Sprintf("viper read user nacos config failed err:%v", err)
 		log.Zlogger.Fatal(msg)
