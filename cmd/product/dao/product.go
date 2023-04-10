@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/cqqqq777/go-kitex-mall/cmd/product/model"
 	"github.com/cqqqq777/go-kitex-mall/shared/consts"
@@ -117,5 +118,26 @@ func (p *Product) PublishedProducts(ctx context.Context, mid int64) (list []*mod
 		return nil, err
 	}
 	err = cursor.All(ctx, &list)
+	return
+}
+
+func (p *Product) CacheNullProductInfo(ctx context.Context, pid int64) {
+	p.rdb.SetEx(ctx, rdk.GetCacheProductDetailKey(pid), "", time.Second*120)
+}
+
+func (p *Product) GetFavoriteId(ctx context.Context, uid int64) ([]string, error) {
+	var cursor uint64
+	result, _, err := p.rdb.SScan(ctx, rdk.GetUserFavoriteProductKey(uid), cursor, "", 0).Result()
+	return result, err
+}
+
+func (p *Product) GetFavorite(ctx context.Context, ids []string) (list []*model.ProductBasic, err error) {
+	list = make([]*model.ProductBasic, 0, 20)
+	filter := bson.M{"product_id": bson.M{"$in": ids}}
+	cur, err := p.mdb.Collection(consts.CollectionProducts).Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	err = cur.All(ctx, &list)
 	return
 }

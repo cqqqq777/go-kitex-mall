@@ -174,7 +174,16 @@ func (s *ProductServiceImpl) ProductDetail(ctx context.Context, req *product.Mal
 	// get basic info
 	info, err := s.Dao.GetProductInfo(ctx, req.ProductId)
 	if err != nil {
+		if errors.Is(err, dao.ErrNoProduct) {
+			resp.CommonResp = response.NewCommonResp(errz.ErrNoProduct)
+
+			// cache a null  value in redis
+			s.Dao.CacheNullProductInfo(ctx, req.ProductId)
+
+			return resp, nil
+		}
 		resp.CommonResp = response.NewCommonResp(errz.ErrProductInternal)
+		log.Zlogger.Errorf("get product info failed err:%s", err.Error())
 		return resp, nil
 	}
 	resp.Product.BasicInfo.Id = info.Id
@@ -257,6 +266,49 @@ func (s *ProductServiceImpl) SearchProduct(ctx context.Context, req *product.Mal
 // ProductFavoriteList implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) ProductFavoriteList(ctx context.Context, req *product.MallProductFavoriteListRequest) (resp *product.MallProductFavoriteListResponse, err error) {
 	// TODO: Your code here...
+	resp = new(product.MallProductFavoriteListResponse)
+
+	// get ids
+	ids, err := s.Dao.GetFavoriteId(ctx, req.UserId)
+	if err != nil {
+		resp.CommonResp = response.NewCommonResp(errz.ErrProductInternal)
+		log.Zlogger.Errorf("get favorite product id failed err:%s", err.Error())
+		return resp, nil
+	}
+
+	if len(ids) == 0 {
+		resp.CommonResp = response.NewCommonResp(nil)
+		return resp, nil
+	}
+
+	// get product list
+	list, err := s.Dao.GetFavorite(ctx, ids)
+	if err != nil {
+		resp.CommonResp = response.NewCommonResp(errz.ErrProductInternal)
+		log.Zlogger.Errorf("get favorite product failed err:%s", err.Error())
+		return resp, nil
+	}
+
+	// build response
+	for _, v := range list {
+		var respProduct *common.Product
+		respProduct.Id = v.Id
+		respProduct.MId = v.Mid
+		respProduct.Name = v.Name
+		respProduct.Price = v.Price
+		respProduct.Description = v.Description
+		respProduct.Stock = v.Stock
+		respProduct.Status = v.Status
+		for _, i := range v.Images {
+			var image *common.Image
+			image.Id = i.Id
+			image.Path = i.Path
+			respProduct.Iamges = append(respProduct.Iamges, image)
+		}
+		resp.Products = append(resp.Products, respProduct)
+	}
+	resp.CommonResp = response.NewCommonResp(nil)
+
 	return
 }
 
