@@ -134,7 +134,7 @@ func (s *ProductServiceImpl) ProductList(ctx context.Context, req *product.MallP
 
 	// check list key
 	if req.Sort == "" {
-		req.Sort = "time"
+		req.Sort = "create_time"
 	}
 	list, num, err := s.Dao.ProductList(ctx, req.Sort, int64(req.Page), int64(req.PageSize))
 	if err != nil {
@@ -367,6 +367,12 @@ func (s *ProductServiceImpl) UpdateProduct(ctx context.Context, req *product.Mal
 		return resp, nil
 	}
 
+	// clear cache
+	err = s.Dao.ClearProductCache(ctx, req.ProductId)
+	if err != nil {
+		log.Zlogger.Errorf("clear product cache failed err:%s", err.Error())
+	}
+
 	resp.CommonResp = response.NewCommonResp(nil)
 	return resp, nil
 }
@@ -380,6 +386,12 @@ func (s *ProductServiceImpl) UpdateStock(ctx context.Context, req *product.MallU
 	if err = s.Dao.UpdateStock(ctx, req.ProductId, req.Stock); err != nil {
 		log.Zlogger.Errorf("update stock failed err:%s", err.Error())
 		return nil, err
+	}
+
+	// clear cache
+	err = s.Dao.ClearProductCache(ctx, req.ProductId)
+	if err != nil {
+		log.Zlogger.Errorf("clear product cache failed err:%s", err.Error())
 	}
 
 	resp.CommonResp = response.NewCommonResp(nil)
