@@ -25,3 +25,7 @@ func GetUserFavoriteProductKey(id int64) string {
 func GetProductSale(id int64) string {
 	return Prefix + strconv.FormatInt(id, 10) + RKProductSaleNum
 }
+
+func GetSetOrderKey(id int64) string {
+	return Prefix + strconv.FormatInt(id, 10) + RKSetOrder
+}

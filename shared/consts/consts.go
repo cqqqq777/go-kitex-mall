@@ -18,6 +18,7 @@ const (
 	PayConfigFile      = "./cmd/pay/config.yaml"
 	ProductConfigFile  = "./cmd/product/config.yaml"
 	OperateConfigFile  = "./cmd/operate/config.yaml"
+	OrderConfigFile    = "./cmd/order/config.yaml"
 )
 
 // nacos constant
@@ -41,6 +42,7 @@ const (
 	CartSnowflakeNode
 	CommentSnowflakeNode
 	ProductSnowflakeNode
+	OrderSnowflakeNode
 	PaySnowflakeNode
 	ChatSnowflakeNode
 	MinioSnowflakeNode
@@ -59,6 +61,7 @@ const (
 	CacheExpTime = time.Second * 1800
 
 	TokenExpiredAt = 43200
+	OrderExpTime   = time.Second * 900
 )
 
 // mongodb collections constant
@@ -99,4 +102,10 @@ const (
 	MerchantGroup = "MERCHANT_GROUP"
 	OperateGroup  = "OPERATE_GROUP"
 	ProductGroup  = "PRODUCT_GROUP"
+)
+
+const (
+	StatusSuccess int8 = iota + 1
+	StatusWaitPay
+	StatusCancel
 )

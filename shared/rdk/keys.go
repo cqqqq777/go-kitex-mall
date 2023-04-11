@@ -10,4 +10,5 @@ const (
 	RKCacheProductDetail = ":cache:product:detail"
 	RKFavoriteProduct    = ":favorite:product"
 	RKProductSaleNum     = ":product:sale"
+	RKSetOrder           = ":order"
 )

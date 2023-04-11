@@ -99,3 +99,21 @@ var (
 	ErrGetCommentNum     = NewErrZ(WithCode(CodeGetCommentNum), WithMsg("get comment num failed"))
 	ErrGetSaleNum        = NewErrZ(WithCode(CodeGetSaleNum), WithMsg("get sale num failed"))
 )
+
+const (
+	CodeOrderService int64 = 60000 + iota
+
+	CodeShortage
+	CodeGenerateOrderId
+	CodeUpdateOrder
+	CodeOrderList
+)
+
+var (
+	ErrOrderInternal = NewErrZ(WithCode(CodeOrderService), WithMsg("order service busy"))
+
+	ErrShortage        = NewErrZ(WithCode(CodeShortage), WithMsg("shortage of stock"))
+	ErrGenerateOrderId = NewErrZ(WithCode(CodeGenerateOrderId), WithMsg("generate order id failed"))
+	ErrUpdateOrder     = NewErrZ(WithCode(CodeUpdateOrder), WithMsg("update order status failed"))
+	ErrGetOrder        = NewErrZ(WithCode(CodeOrderList), WithMsg("get order failed"))
+)

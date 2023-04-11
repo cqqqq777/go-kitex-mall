@@ -2856,10 +2856,12 @@ type Order struct {
 	OrderId    int64 `thrift:"order_id,1" frugal:"1,default,i64" json:"order_id"`
 	UserId     int64 `thrift:"user_id,2" frugal:"2,default,i64" json:"user_id"`
 	ProductId  int64 `thrift:"product_id,3" frugal:"3,default,i64" json:"product_id"`
-	Amount     int64 `thrift:"amount,4" frugal:"4,default,i64" json:"amount"`
-	Status     int8  `thrift:"status,5" frugal:"5,default,i8" json:"status"`
-	CreateTime int64 `thrift:"create_time,6" frugal:"6,default,i64" json:"create_time"`
-	UpdateTime int64 `thrift:"update_time,7" frugal:"7,default,i64" json:"update_time"`
+	ProductNum int64 `thrift:"product_num,4" frugal:"4,default,i64" json:"product_num"`
+	Amount     int64 `thrift:"amount,5" frugal:"5,default,i64" json:"amount"`
+	Status     int8  `thrift:"status,6" frugal:"6,default,i8" json:"status"`
+	CreateTime int64 `thrift:"create_time,7" frugal:"7,default,i64" json:"create_time"`
+	UpdateTime int64 `thrift:"update_time,8" frugal:"8,default,i64" json:"update_time"`
+	ExpTime    int64 `thrift:"exp_time,9" frugal:"9,default,i64" json:"exp_time"`
 }
 
 func NewOrder() *Order {
@@ -2882,6 +2884,10 @@ func (p *Order) GetProductId() (v int64) {
 	return p.ProductId
 }
 
+func (p *Order) GetProductNum() (v int64) {
+	return p.ProductNum
+}
+
 func (p *Order) GetAmount() (v int64) {
 	return p.Amount
 }
@@ -2897,6 +2903,10 @@ func (p *Order) GetCreateTime() (v int64) {
 func (p *Order) GetUpdateTime() (v int64) {
 	return p.UpdateTime
 }
+
+func (p *Order) GetExpTime() (v int64) {
+	return p.ExpTime
+}
 func (p *Order) SetOrderId(val int64) {
 	p.OrderId = val
 }
@@ -2905,6 +2915,9 @@ func (p *Order) SetUserId(val int64) {
 }
 func (p *Order) SetProductId(val int64) {
 	p.ProductId = val
+}
+func (p *Order) SetProductNum(val int64) {
+	p.ProductNum = val
 }
 func (p *Order) SetAmount(val int64) {
 	p.Amount = val
@@ -2918,15 +2931,20 @@ func (p *Order) SetCreateTime(val int64) {
 func (p *Order) SetUpdateTime(val int64) {
 	p.UpdateTime = val
 }
+func (p *Order) SetExpTime(val int64) {
+	p.ExpTime = val
+}
 
 var fieldIDToName_Order = map[int16]string{
 	1: "order_id",
 	2: "user_id",
 	3: "product_id",
-	4: "amount",
-	5: "status",
-	6: "create_time",
-	7: "update_time",
+	4: "product_num",
+	5: "amount",
+	6: "status",
+	7: "create_time",
+	8: "update_time",
+	9: "exp_time",
 }
 
 func (p *Order) Read(iprot thrift.TProtocol) (err error) {
@@ -2989,7 +3007,7 @@ func (p *Order) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.BYTE {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2999,7 +3017,7 @@ func (p *Order) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 6:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.BYTE {
 				if err = p.ReadField6(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -3011,6 +3029,26 @@ func (p *Order) Read(iprot thrift.TProtocol) (err error) {
 		case 7:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 8:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField8(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 9:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField9(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -3079,12 +3117,21 @@ func (p *Order) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.Amount = v
+		p.ProductNum = v
 	}
 	return nil
 }
 
 func (p *Order) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.Amount = v
+	}
+	return nil
+}
+
+func (p *Order) ReadField6(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadByte(); err != nil {
 		return err
 	} else {
@@ -3093,7 +3140,7 @@ func (p *Order) ReadField5(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *Order) ReadField6(iprot thrift.TProtocol) error {
+func (p *Order) ReadField7(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
@@ -3102,11 +3149,20 @@ func (p *Order) ReadField6(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *Order) ReadField7(iprot thrift.TProtocol) error {
+func (p *Order) ReadField8(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		p.UpdateTime = v
+	}
+	return nil
+}
+
+func (p *Order) ReadField9(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.ExpTime = v
 	}
 	return nil
 }
@@ -3143,6 +3199,14 @@ func (p *Order) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField7(oprot); err != nil {
 			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
+			goto WriteFieldError
+		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
 			goto WriteFieldError
 		}
 
@@ -3216,10 +3280,10 @@ WriteFieldEndError:
 }
 
 func (p *Order) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("amount", thrift.I64, 4); err != nil {
+	if err = oprot.WriteFieldBegin("product_num", thrift.I64, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.Amount); err != nil {
+	if err := oprot.WriteI64(p.ProductNum); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3233,10 +3297,10 @@ WriteFieldEndError:
 }
 
 func (p *Order) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("status", thrift.BYTE, 5); err != nil {
+	if err = oprot.WriteFieldBegin("amount", thrift.I64, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteByte(p.Status); err != nil {
+	if err := oprot.WriteI64(p.Amount); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3250,10 +3314,10 @@ WriteFieldEndError:
 }
 
 func (p *Order) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("create_time", thrift.I64, 6); err != nil {
+	if err = oprot.WriteFieldBegin("status", thrift.BYTE, 6); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.CreateTime); err != nil {
+	if err := oprot.WriteByte(p.Status); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3267,10 +3331,10 @@ WriteFieldEndError:
 }
 
 func (p *Order) writeField7(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("update_time", thrift.I64, 7); err != nil {
+	if err = oprot.WriteFieldBegin("create_time", thrift.I64, 7); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.UpdateTime); err != nil {
+	if err := oprot.WriteI64(p.CreateTime); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3281,6 +3345,40 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *Order) writeField8(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("update_time", thrift.I64, 8); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.UpdateTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
+func (p *Order) writeField9(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("exp_time", thrift.I64, 9); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.ExpTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
 }
 
 func (p *Order) String() string {
@@ -3305,16 +3403,22 @@ func (p *Order) DeepEqual(ano *Order) bool {
 	if !p.Field3DeepEqual(ano.ProductId) {
 		return false
 	}
-	if !p.Field4DeepEqual(ano.Amount) {
+	if !p.Field4DeepEqual(ano.ProductNum) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Status) {
+	if !p.Field5DeepEqual(ano.Amount) {
 		return false
 	}
-	if !p.Field6DeepEqual(ano.CreateTime) {
+	if !p.Field6DeepEqual(ano.Status) {
 		return false
 	}
-	if !p.Field7DeepEqual(ano.UpdateTime) {
+	if !p.Field7DeepEqual(ano.CreateTime) {
+		return false
+	}
+	if !p.Field8DeepEqual(ano.UpdateTime) {
+		return false
+	}
+	if !p.Field9DeepEqual(ano.ExpTime) {
 		return false
 	}
 	return true
@@ -3343,28 +3447,42 @@ func (p *Order) Field3DeepEqual(src int64) bool {
 }
 func (p *Order) Field4DeepEqual(src int64) bool {
 
+	if p.ProductNum != src {
+		return false
+	}
+	return true
+}
+func (p *Order) Field5DeepEqual(src int64) bool {
+
 	if p.Amount != src {
 		return false
 	}
 	return true
 }
-func (p *Order) Field5DeepEqual(src int8) bool {
+func (p *Order) Field6DeepEqual(src int8) bool {
 
 	if p.Status != src {
 		return false
 	}
 	return true
 }
-func (p *Order) Field6DeepEqual(src int64) bool {
+func (p *Order) Field7DeepEqual(src int64) bool {
 
 	if p.CreateTime != src {
 		return false
 	}
 	return true
 }
-func (p *Order) Field7DeepEqual(src int64) bool {
+func (p *Order) Field8DeepEqual(src int64) bool {
 
 	if p.UpdateTime != src {
+		return false
+	}
+	return true
+}
+func (p *Order) Field9DeepEqual(src int64) bool {
+
+	if p.ExpTime != src {
 		return false
 	}
 	return true

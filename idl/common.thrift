@@ -61,8 +61,10 @@ struct Order {
     1: i64 order_id
     2: i64 user_id
     3: i64 product_id
-    4: i64 amount
-    5: i8 status
-    6: i64 create_time
-    7: i64 update_time
+    4: i64 product_num
+    5: i64 amount
+    6: i8 status
+    7: i64 create_time
+    8: i64 update_time
+    9: i64 exp_time
 }
