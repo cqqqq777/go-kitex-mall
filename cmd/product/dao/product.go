@@ -141,3 +141,17 @@ func (p *Product) GetFavorite(ctx context.Context, ids []string) (list []*model.
 	err = cur.All(ctx, &list)
 	return
 }
+
+func (p *Product) UpdateProduct(ctx context.Context, updateInfo *model.UpdateInfo) error {
+	filter := bson.M{"product_id": updateInfo.Id}
+	update := bson.M{"$set": bson.M{"name": updateInfo.Name, "price": updateInfo.Price, "stock": updateInfo.Stock, "description": updateInfo.Description}}
+	_, err := p.mdb.Collection(consts.CollectionProducts).UpdateOne(ctx, filter, update)
+	return err
+}
+
+func (p *Product) UpdateStock(ctx context.Context, id, stock int64) error {
+	filter := bson.M{"product_id": id}
+	update := bson.M{"$set": bson.M{"stock": stock}}
+	_, err := p.mdb.Collection(consts.CollectionProducts).UpdateOne(ctx, filter, update)
+	return err
+}

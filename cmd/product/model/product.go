@@ -19,3 +19,11 @@ type Image struct {
 	Id   int16  `bson:"image_id"`
 	Path string `bson:"path"`
 }
+
+type UpdateInfo struct {
+	Id          int64  `bson:"product_id"`
+	Price       int64  `bson:"price"`
+	Stock       int64  `bson:"stock"`
+	Name        string `bson:"name"`
+	Description string `bson:"description"`
+}
