@@ -347,3 +347,41 @@ func (s *ProductServiceImpl) PublishedProducts(ctx context.Context, req *product
 
 	return resp, nil
 }
+
+// UpdateProduct implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) UpdateProduct(ctx context.Context, req *product.MallUpdateProductRequest) (resp *product.MallUpdateProductResponse, err error) {
+	// TODO: Your code here...
+	resp = new(product.MallUpdateProductResponse)
+
+	// update
+	var updateInfo = &model.UpdateInfo{
+		Id:          req.ProductId,
+		Price:       req.Price,
+		Stock:       req.Stock,
+		Name:        req.Name,
+		Description: req.Description,
+	}
+	if err = s.Dao.UpdateProduct(ctx, updateInfo); err != nil {
+		resp.CommonResp = response.NewCommonResp(errz.ErrProductInternal)
+		log.Zlogger.Errorf("update product info failed err:%s", err.Error())
+		return resp, nil
+	}
+
+	resp.CommonResp = response.NewCommonResp(nil)
+	return resp, nil
+}
+
+// UpdateStock implements the ProductServiceImpl interface.
+// just for order service
+func (s *ProductServiceImpl) UpdateStock(ctx context.Context, req *product.MallUpdateStockRequest) (resp *product.MallUpdateStockResponse, err error) {
+	// TODO: Your code here...
+	resp = new(product.MallUpdateStockResponse)
+
+	if err = s.Dao.UpdateStock(ctx, req.ProductId, req.Stock); err != nil {
+		log.Zlogger.Errorf("update stock failed err:%s", err.Error())
+		return nil, err
+	}
+
+	resp.CommonResp = response.NewCommonResp(nil)
+	return resp, nil
+}
