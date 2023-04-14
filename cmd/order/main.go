@@ -37,11 +37,28 @@ func main() {
 	orderDao := dao.NewOrder(db, rdb)
 	userManager := initialize.InitUser()
 	productManager := initialize.InitProduct()
+	producer, err := pkg.NewPublisher()
+	if err != nil {
+		log.Zlogger.Fatal("new producer err", err)
+	}
+
+	// start consumer
+	consumer, err := pkg.NewConsumer()
+	if err != nil {
+		log.Zlogger.Fatal("new consumer err:", err)
+	}
+	go func() {
+		err = consumer.Consume(orderDao)
+		if err != nil {
+			log.Zlogger.Fatal("start consumer err:", err)
+		}
+	}()
 
 	impl := &OrderServiceImpl{
 		Dao:            orderDao,
 		UserManager:    &pkg.UserManager{UserService: userManager},
 		ProductManager: &pkg.ProductManage{ProductService: productManager},
+		Producer:       producer,
 	}
 
 	srv := order.NewServer(impl,
@@ -53,7 +70,7 @@ func main() {
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name}),
 	)
 
-	err := srv.Run()
+	err = srv.Run()
 
 	if err != nil {
 		log.Zlogger.Fatal(err)

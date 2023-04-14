@@ -28,12 +28,21 @@ type OtelConfig struct {
 	EndPoint string `mapstructure:"endpoint" json:"endpoint"`
 }
 
+type NsqConfig struct {
+	Host          string `mapstructure:"host" json:"host"`
+	Port          int    `mapstructure:"port" json:"port"`
+	ProducerTopic string `mapstructure:"producer_topic" json:"producer_topic"`
+	ConsumerTopic string `mapstructure:"consumer_topic" json:"consumer_topic"`
+	Channel       string `mapstructure:"channel" json:"channel"`
+}
+
 type ServerConfig struct {
 	Name           string        `mapstructure:"name" json:"name"`
 	Host           string        `mapstructure:"host" json:"host"`
 	OtelInfo       OtelConfig    `mapstructure:"otel" json:"otel"`
 	MysqlInfo      MysqlConfig   `mapstructure:"mysql" json:"mysql"`
 	RedisInfo      RedisConfig   `mapstructure:"redis" json:"redis"`
+	NsqInfo        NsqConfig     `mapstructure:"nsq" json:"nsq"`
 	UserSrvInfo    UserSrvConfig `mapstructure:"user_srv" json:"user_srv"`
 	ProductSrvInfo ProductConfig `mapstructure:"product_srv" json:"product_srv"`
 }

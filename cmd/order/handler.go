@@ -22,6 +22,7 @@ type OrderServiceImpl struct {
 	Dao *dao.Order
 	UserManager
 	ProductManager
+	Producer
 }
 
 type UserManager interface {
@@ -31,6 +32,10 @@ type UserManager interface {
 type ProductManager interface {
 	GetProductInfo(ctx context.Context, pid int64) (*common.Product, error)
 	UpdateStock(ctx context.Context, pid, stock int64) error
+}
+
+type Producer interface {
+	Produce(msg pkg.ProducerMsg) error
 }
 
 // CreateOrder implements the OrderServiceImpl interface.
@@ -95,9 +100,20 @@ func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *order.MallCreat
 	}
 
 	// set order in redis
-	err = s.Dao.SetOrderInRedis(ctx, orderInfo.Id, orderInfo.Amount, orderInfo.ExpTime)
+	//err = s.Dao.SetOrderInRedis(ctx, orderInfo.Id, orderInfo.Amount, orderInfo.ExpTime)
+	//if err != nil {
+	//	log.Zlogger.Errorf("set order in redis failed err:%s", err.Error())
+	//}
+
+	// publish msg to nsq
+	err = s.Producer.Produce(pkg.ProducerMsg{
+		OrderID: orderInfo.Id,
+		Amount:  orderInfo.Amount,
+	})
 	if err != nil {
-		log.Zlogger.Errorf("set order in redis failed err:%s", err.Error())
+		resp.CommonResp = response.NewCommonResp(errz.ErrOrderInternal)
+		log.Zlogger.Errorf("publish order to nsq failed err:%s", err.Error())
+		return resp, nil
 	}
 
 	resp.CommonResp = response.NewCommonResp(nil)
