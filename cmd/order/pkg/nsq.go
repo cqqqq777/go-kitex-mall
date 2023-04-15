@@ -2,11 +2,9 @@ package pkg
 
 import (
 	"fmt"
+	"github.com/bytedance/sonic"
 	"github.com/cqqqq777/go-kitex-mall/cmd/order/config"
 	"github.com/cqqqq777/go-kitex-mall/cmd/order/dao"
-	"github.com/cqqqq777/go-kitex-mall/shared/consts"
-
-	"github.com/bytedance/sonic"
 	"github.com/nsqio/go-nsq"
 )
 
@@ -45,6 +43,7 @@ type Consumer struct {
 
 type ConsumerMsg struct {
 	OrderID int64 `json:"order_id"`
+	Status  int8  `json:"status"`
 }
 
 func NewConsumer() (consumer *Consumer, err error) {
@@ -61,7 +60,7 @@ func handleMsg(dao *dao.Order) func(*nsq.Message) error {
 		if err != nil {
 			return err
 		}
-		err = dao.UpdateOrder(consumerMsg.OrderID, consts.StatusCancel)
+		err = dao.UpdateOrder(consumerMsg.OrderID, consumerMsg.Status)
 		if err != nil {
 			return err
 		}
@@ -71,12 +70,8 @@ func handleMsg(dao *dao.Order) func(*nsq.Message) error {
 
 func (c *Consumer) Consume(dao *dao.Order) error {
 	host := fmt.Sprintf("%s:%d", config.GlobalServerConfig.NsqInfo.Host, config.GlobalServerConfig.NsqInfo.Port)
-	err := c.Consumer.ConnectToNSQD(host)
-	if err != nil {
-		return err
-	}
 	c.Consumer.AddHandler(nsq.HandlerFunc(handleMsg(dao)))
-	err = c.Consumer.ConnectToNSQD(host)
+	err := c.Consumer.ConnectToNSQD(host)
 	if err != nil {
 		return err
 	}

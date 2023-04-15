@@ -2908,6 +2908,20 @@ func (p *Pay) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 8:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField8(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -3041,6 +3055,20 @@ func (p *Pay) FastReadField7(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *Pay) FastReadField8(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.Url = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *Pay) FastWrite(buf []byte) int {
 	return 0
@@ -3057,6 +3085,7 @@ func (p *Pay) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int
 		offset += p.fastWriteField5(buf[offset:], binaryWriter)
 		offset += p.fastWriteField6(buf[offset:], binaryWriter)
 		offset += p.fastWriteField7(buf[offset:], binaryWriter)
+		offset += p.fastWriteField8(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -3074,6 +3103,7 @@ func (p *Pay) BLength() int {
 		l += p.field5Length()
 		l += p.field6Length()
 		l += p.field7Length()
+		l += p.field8Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -3143,6 +3173,15 @@ func (p *Pay) fastWriteField7(buf []byte, binaryWriter bthrift.BinaryWriter) int
 	return offset
 }
 
+func (p *Pay) fastWriteField8(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "url", thrift.STRING, 8)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Url)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *Pay) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("pay_id", thrift.I64, 1)
@@ -3201,6 +3240,15 @@ func (p *Pay) field7Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("status", thrift.BYTE, 7)
 	l += bthrift.Binary.ByteLength(p.Status)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *Pay) field8Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("url", thrift.STRING, 8)
+	l += bthrift.Binary.StringLengthNocopy(p.Url)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

@@ -3489,13 +3489,14 @@ func (p *Order) Field9DeepEqual(src int64) bool {
 }
 
 type Pay struct {
-	PayId      int64 `thrift:"pay_id,1" frugal:"1,default,i64" json:"pay_id"`
-	OrderId    int64 `thrift:"order_id,2" frugal:"2,default,i64" json:"order_id"`
-	UserId     int64 `thrift:"user_id,3" frugal:"3,default,i64" json:"user_id"`
-	Amount     int64 `thrift:"amount,4" frugal:"4,default,i64" json:"amount"`
-	CreateTime int64 `thrift:"create_time,5" frugal:"5,default,i64" json:"create_time"`
-	UpdateTime int64 `thrift:"update_time,6" frugal:"6,default,i64" json:"update_time"`
-	Status     int8  `thrift:"status,7" frugal:"7,default,i8" json:"status"`
+	PayId      int64  `thrift:"pay_id,1" frugal:"1,default,i64" json:"pay_id"`
+	OrderId    int64  `thrift:"order_id,2" frugal:"2,default,i64" json:"order_id"`
+	UserId     int64  `thrift:"user_id,3" frugal:"3,default,i64" json:"user_id"`
+	Amount     int64  `thrift:"amount,4" frugal:"4,default,i64" json:"amount"`
+	CreateTime int64  `thrift:"create_time,5" frugal:"5,default,i64" json:"create_time"`
+	UpdateTime int64  `thrift:"update_time,6" frugal:"6,default,i64" json:"update_time"`
+	Status     int8   `thrift:"status,7" frugal:"7,default,i8" json:"status"`
+	Url        string `thrift:"url,8" frugal:"8,default,string" json:"url"`
 }
 
 func NewPay() *Pay {
@@ -3533,6 +3534,10 @@ func (p *Pay) GetUpdateTime() (v int64) {
 func (p *Pay) GetStatus() (v int8) {
 	return p.Status
 }
+
+func (p *Pay) GetUrl() (v string) {
+	return p.Url
+}
 func (p *Pay) SetPayId(val int64) {
 	p.PayId = val
 }
@@ -3554,6 +3559,9 @@ func (p *Pay) SetUpdateTime(val int64) {
 func (p *Pay) SetStatus(val int8) {
 	p.Status = val
 }
+func (p *Pay) SetUrl(val string) {
+	p.Url = val
+}
 
 var fieldIDToName_Pay = map[int16]string{
 	1: "pay_id",
@@ -3563,6 +3571,7 @@ var fieldIDToName_Pay = map[int16]string{
 	5: "create_time",
 	6: "update_time",
 	7: "status",
+	8: "url",
 }
 
 func (p *Pay) Read(iprot thrift.TProtocol) (err error) {
@@ -3647,6 +3656,16 @@ func (p *Pay) Read(iprot thrift.TProtocol) (err error) {
 		case 7:
 			if fieldTypeId == thrift.BYTE {
 				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 8:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField8(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -3747,6 +3766,15 @@ func (p *Pay) ReadField7(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *Pay) ReadField8(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Url = v
+	}
+	return nil
+}
+
 func (p *Pay) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("Pay"); err != nil {
@@ -3779,6 +3807,10 @@ func (p *Pay) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField7(oprot); err != nil {
 			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
 			goto WriteFieldError
 		}
 
@@ -3919,6 +3951,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
 }
 
+func (p *Pay) writeField8(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("url", thrift.STRING, 8); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Url); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
 func (p *Pay) String() string {
 	if p == nil {
 		return "<nil>"
@@ -3951,6 +4000,9 @@ func (p *Pay) DeepEqual(ano *Pay) bool {
 		return false
 	}
 	if !p.Field7DeepEqual(ano.Status) {
+		return false
+	}
+	if !p.Field8DeepEqual(ano.Url) {
 		return false
 	}
 	return true
@@ -4001,6 +4053,13 @@ func (p *Pay) Field6DeepEqual(src int64) bool {
 func (p *Pay) Field7DeepEqual(src int8) bool {
 
 	if p.Status != src {
+		return false
+	}
+	return true
+}
+func (p *Pay) Field8DeepEqual(src string) bool {
+
+	if strings.Compare(p.Url, src) != 0 {
 		return false
 	}
 	return true

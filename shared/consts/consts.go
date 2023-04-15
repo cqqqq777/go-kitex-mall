@@ -2,6 +2,10 @@ package consts
 
 import "time"
 
+const (
+	AppId = "2021000122675958"
+)
+
 // database constant
 const (
 	MysqlDns = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
@@ -102,6 +106,7 @@ const (
 	MerchantGroup = "MERCHANT_GROUP"
 	OperateGroup  = "OPERATE_GROUP"
 	ProductGroup  = "PRODUCT_GROUP"
+	OrderGroup    = "ORDER_GROUP"
 )
 
 const (

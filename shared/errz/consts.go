@@ -117,3 +117,21 @@ var (
 	ErrUpdateOrder     = NewErrZ(WithCode(CodeUpdateOrder), WithMsg("update order status failed"))
 	ErrGetOrder        = NewErrZ(WithCode(CodeOrderList), WithMsg("get order failed"))
 )
+
+const (
+	CodePayService int64 = 70000 + iota
+
+	CodeOrderPaid
+	CodeOrderCancel
+	CodeAmountWrong
+	CodeGenerateAlipay
+)
+
+var (
+	ErrPayInternal = NewErrZ(WithCode(CodePayService), WithMsg("pay service busy"))
+
+	ErrOrderPaid      = NewErrZ(WithCode(CodeOrderPaid), WithMsg("order have paid"))
+	ErrOrderCancel    = NewErrZ(WithCode(CodeOrderCancel), WithMsg("order have canceled"))
+	ErrAmountWrong    = NewErrZ(WithCode(CodeAmountWrong), WithMsg("wrong amount"))
+	ErrGenerateAlipay = NewErrZ(WithCode(CodeGenerateAlipay), WithMsg("generate alipay failed"))
+)
