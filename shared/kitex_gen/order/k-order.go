@@ -349,6 +349,20 @@ func (p *MallCreateOrderResponse) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -411,6 +425,20 @@ func (p *MallCreateOrderResponse) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *MallCreateOrderResponse) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.Amount = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *MallCreateOrderResponse) FastWrite(buf []byte) int {
 	return 0
@@ -421,6 +449,7 @@ func (p *MallCreateOrderResponse) FastWriteNocopy(buf []byte, binaryWriter bthri
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "mall_create_order_response")
 	if p != nil {
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -434,6 +463,7 @@ func (p *MallCreateOrderResponse) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field3Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -457,6 +487,15 @@ func (p *MallCreateOrderResponse) fastWriteField2(buf []byte, binaryWriter bthri
 	return offset
 }
 
+func (p *MallCreateOrderResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "amount", thrift.I64, 3)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.Amount)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *MallCreateOrderResponse) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("common_resp", thrift.STRUCT, 1)
@@ -469,6 +508,15 @@ func (p *MallCreateOrderResponse) field2Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("order_id", thrift.I64, 2)
 	l += bthrift.Binary.I64Length(p.OrderId)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *MallCreateOrderResponse) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("amount", thrift.I64, 3)
+	l += bthrift.Binary.I64Length(p.Amount)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

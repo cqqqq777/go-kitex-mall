@@ -107,18 +107,19 @@ func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *order.MallCreat
 	//}
 
 	// publish msg to nsq
-	err = s.Producer.Produce(pkg.ProducerMsg{
-		OrderID: orderInfo.Id,
-		Amount:  orderInfo.Amount,
-	})
-	if err != nil {
-		resp.CommonResp = response.NewCommonResp(errz.ErrOrderInternal)
-		log.Zlogger.Errorf("publish order to nsq failed err:%s", err.Error())
-		return resp, nil
-	}
+	//err = s.Producer.Produce(pkg.ProducerMsg{
+	//	OrderID: orderInfo.Id,
+	//	Amount:  orderInfo.Amount,
+	//})
+	//if err != nil {
+	//	resp.CommonResp = response.NewCommonResp(errz.ErrOrderInternal)
+	//	log.Zlogger.Errorf("publish order to nsq failed err:%s", err.Error())
+	//	return resp, nil
+	//}
 
 	resp.CommonResp = response.NewCommonResp(nil)
 	resp.OrderId = orderInfo.Id
+	resp.Amount = orderInfo.Amount
 	return resp, nil
 }
 

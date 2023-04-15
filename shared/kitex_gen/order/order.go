@@ -353,6 +353,7 @@ func (p *MallCreateOrderRequest) Field4DeepEqual(src int64) bool {
 type MallCreateOrderResponse struct {
 	CommonResp *common.CommonResponse `thrift:"common_resp,1" frugal:"1,default,common.CommonResponse" json:"common_resp"`
 	OrderId    int64                  `thrift:"order_id,2" frugal:"2,default,i64" json:"order_id"`
+	Amount     int64                  `thrift:"amount,3" frugal:"3,default,i64" json:"amount"`
 }
 
 func NewMallCreateOrderResponse() *MallCreateOrderResponse {
@@ -375,16 +376,24 @@ func (p *MallCreateOrderResponse) GetCommonResp() (v *common.CommonResponse) {
 func (p *MallCreateOrderResponse) GetOrderId() (v int64) {
 	return p.OrderId
 }
+
+func (p *MallCreateOrderResponse) GetAmount() (v int64) {
+	return p.Amount
+}
 func (p *MallCreateOrderResponse) SetCommonResp(val *common.CommonResponse) {
 	p.CommonResp = val
 }
 func (p *MallCreateOrderResponse) SetOrderId(val int64) {
 	p.OrderId = val
 }
+func (p *MallCreateOrderResponse) SetAmount(val int64) {
+	p.Amount = val
+}
 
 var fieldIDToName_MallCreateOrderResponse = map[int16]string{
 	1: "common_resp",
 	2: "order_id",
+	3: "amount",
 }
 
 func (p *MallCreateOrderResponse) IsSetCommonResp() bool {
@@ -423,6 +432,16 @@ func (p *MallCreateOrderResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -477,6 +496,15 @@ func (p *MallCreateOrderResponse) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *MallCreateOrderResponse) ReadField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.Amount = v
+	}
+	return nil
+}
+
 func (p *MallCreateOrderResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("mall_create_order_response"); err != nil {
@@ -489,6 +517,10 @@ func (p *MallCreateOrderResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -544,6 +576,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *MallCreateOrderResponse) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("amount", thrift.I64, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.Amount); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
 func (p *MallCreateOrderResponse) String() string {
 	if p == nil {
 		return "<nil>"
@@ -563,6 +612,9 @@ func (p *MallCreateOrderResponse) DeepEqual(ano *MallCreateOrderResponse) bool {
 	if !p.Field2DeepEqual(ano.OrderId) {
 		return false
 	}
+	if !p.Field3DeepEqual(ano.Amount) {
+		return false
+	}
 	return true
 }
 
@@ -576,6 +628,13 @@ func (p *MallCreateOrderResponse) Field1DeepEqual(src *common.CommonResponse) bo
 func (p *MallCreateOrderResponse) Field2DeepEqual(src int64) bool {
 
 	if p.OrderId != src {
+		return false
+	}
+	return true
+}
+func (p *MallCreateOrderResponse) Field3DeepEqual(src int64) bool {
+
+	if p.Amount != src {
 		return false
 	}
 	return true

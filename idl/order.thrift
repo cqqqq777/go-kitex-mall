@@ -12,6 +12,7 @@ struct mall_create_order_request {
 struct mall_create_order_response{
     1: common.common_response common_resp
     2: i64 order_id
+    3: i64 amount
 }
 
 struct mall_update_order_request {
