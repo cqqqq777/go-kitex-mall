@@ -8,8 +8,13 @@ const (
 const (
 	CodeInvalidParam int64 = 10000 + iota
 	CodeTokenInvalid
-
 	CodeNoPermission
+	CodeRpcCall
+)
+
+const (
+	MsgInvalidParam = "invalid param"
+	MsgRpcCall      = "rpc call failed"
 )
 
 const (

@@ -11,6 +11,7 @@ require (
 	github.com/cloudwego/hertz v0.6.1
 	github.com/cloudwego/kitex v0.5.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/hertz-contrib/registry/nacos v0.0.0-20230310022437-e0024eacdbb7
 	github.com/kitex-contrib/obs-opentelemetry v0.2.1
 	github.com/kitex-contrib/registry-nacos v0.1.0
 	github.com/nacos-group/nacos-sdk-go v1.1.4

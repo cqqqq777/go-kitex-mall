@@ -23,6 +23,7 @@ const (
 	ProductConfigFile  = "./cmd/product/config.yaml"
 	OperateConfigFile  = "./cmd/operate/config.yaml"
 	OrderConfigFile    = "./cmd/order/config.yaml"
+	ApiConfigFile      = "./cmd/api/config.yaml"
 )
 
 // nacos constant
