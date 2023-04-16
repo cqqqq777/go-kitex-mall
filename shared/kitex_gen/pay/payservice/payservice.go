@@ -22,6 +22,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"CreatePay": kitex.NewMethodInfo(createPayHandler, newPayServiceCreatePayArgs, newPayServiceCreatePayResult, false),
 		"PayDetail": kitex.NewMethodInfo(payDetailHandler, newPayServicePayDetailArgs, newPayServicePayDetailResult, false),
 		"PayReturn": kitex.NewMethodInfo(payReturnHandler, newPayServicePayReturnArgs, newPayServicePayReturnResult, false),
+		"PayNotify": kitex.NewMethodInfo(payNotifyHandler, newPayServicePayNotifyArgs, newPayServicePayNotifyResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "pay",
@@ -91,6 +92,24 @@ func newPayServicePayReturnResult() interface{} {
 	return pay.NewPayServicePayReturnResult()
 }
 
+func payNotifyHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*pay.PayServicePayNotifyArgs)
+	realResult := result.(*pay.PayServicePayNotifyResult)
+	success, err := handler.(pay.PayService).PayNotify(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newPayServicePayNotifyArgs() interface{} {
+	return pay.NewPayServicePayNotifyArgs()
+}
+
+func newPayServicePayNotifyResult() interface{} {
+	return pay.NewPayServicePayNotifyResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -126,6 +145,16 @@ func (p *kClient) PayReturn(ctx context.Context, req *pay.MallPayReturnRequest) 
 	_args.Req = req
 	var _result pay.PayServicePayReturnResult
 	if err = p.c.Call(ctx, "PayReturn", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) PayNotify(ctx context.Context, req *pay.MallPayNotifyRequest) (r *pay.MallPayNotifyResponse, err error) {
+	var _args pay.PayServicePayNotifyArgs
+	_args.Req = req
+	var _result pay.PayServicePayNotifyResult
+	if err = p.c.Call(ctx, "PayNotify", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

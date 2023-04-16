@@ -14,6 +14,7 @@ type Client interface {
 	CreatePay(ctx context.Context, req *pay.MallCreatePayRequest, callOptions ...callopt.Option) (r *pay.MallCreatePayResponse, err error)
 	PayDetail(ctx context.Context, req *pay.MallPayDetailRequest, callOptions ...callopt.Option) (r *pay.MallPayDetailResponse, err error)
 	PayReturn(ctx context.Context, req *pay.MallPayReturnRequest, callOptions ...callopt.Option) (r *pay.MallPayReturnResponse, err error)
+	PayNotify(ctx context.Context, req *pay.MallPayNotifyRequest, callOptions ...callopt.Option) (r *pay.MallPayNotifyResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -58,4 +59,9 @@ func (p *kPayServiceClient) PayDetail(ctx context.Context, req *pay.MallPayDetai
 func (p *kPayServiceClient) PayReturn(ctx context.Context, req *pay.MallPayReturnRequest, callOptions ...callopt.Option) (r *pay.MallPayReturnResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.PayReturn(ctx, req)
+}
+
+func (p *kPayServiceClient) PayNotify(ctx context.Context, req *pay.MallPayNotifyRequest, callOptions ...callopt.Option) (r *pay.MallPayNotifyResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.PayNotify(ctx, req)
 }

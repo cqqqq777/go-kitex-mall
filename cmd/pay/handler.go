@@ -170,3 +170,30 @@ func (s *PayServiceImpl) PayReturn(ctx context.Context, req *pay.MallPayReturnRe
 	resp.CommonResp = response.NewCommonResp(nil)
 	return
 }
+
+// PayNotify implements the PayServiceImpl interface.
+func (s *PayServiceImpl) PayNotify(ctx context.Context, req *pay.MallPayNotifyRequest) (resp *pay.MallPayNotifyResponse, err error) {
+	// TODO: Your code here...
+	resp = new(pay.MallPayNotifyResponse)
+
+	// update order status
+	if err = s.Producer.Produce(ctx, pkg.Msg{
+		OrderId: req.OrderId,
+		Status:  req.Status,
+	}); err != nil {
+		log.Zlogger.Errorf("update order status failed err:%s", err.Error())
+		resp.CommonResp = response.NewCommonResp(errz.ErrPayInternal)
+		return resp, nil
+	}
+
+	// update pay status
+	err = s.Dao.UpdatePayStatus(req.PayId, consts.StatusCancel)
+	if err != nil {
+		log.Zlogger.Errorf("update pay stauts failed err:%s", err.Error())
+		resp.CommonResp = response.NewCommonResp(errz.ErrPayInternal)
+		return resp, nil
+	}
+
+	resp.CommonResp = response.NewCommonResp(nil)
+	return
+}

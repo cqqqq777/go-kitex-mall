@@ -47,6 +47,8 @@ func Pay(orderID, amount int64) (string, error) {
 	pay.OutTradeNo = strconv.FormatInt(orderID, 10)
 	pay.ProductCode = "FAST_INSTANT_TRADE_PAY"
 	pay.TotalAmount = fmt.Sprintf("%.2f", float64(amount)/100)
+	pay.TimeoutExpress = "15m"
+	pay.NotifyURL = ""
 	url, err := client.TradePagePay(pay)
 	if err != nil {
 		return "", nil
