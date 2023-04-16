@@ -19,11 +19,80 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_api := root.Group("/api", _apiMw()...)
-		_api.POST("/register", append(_registerMw(), api.Register)...)
-		_api.POST("/verification", append(_getverificationMw(), api.GetVerification)...)
+		{
+			_merchant := _api.Group("/merchant", _merchantMw()...)
+			{
+				_info := _merchant.Group("/info", _infoMw()...)
+				_info.GET("/", append(_merchantinfoMw(), api.MerchantInfo)...)
+			}
+			{
+				_login := _merchant.Group("/login", _loginMw()...)
+				_login.GET("/", append(_merchantloginMw(), api.MerchantLogin)...)
+			}
+			{
+				_register := _merchant.Group("/register", _registerMw()...)
+				_register.POST("/", append(_merchantregisterMw(), api.MerchantRegister)...)
+			}
+		}
+		{
+			_order := _api.Group("/order", _orderMw()...)
+			_order.POST("/", append(_createorderMw(), api.CreateOrder)...)
+		}
+		{
+			_orders := _api.Group("/orders", _ordersMw()...)
+			_orders.GET("/", append(_getorderMw(), api.GetOrder)...)
+			{
+				_list := _orders.Group("/list", _listMw()...)
+				_list.GET("/", append(_orderlistMw(), api.OrderList)...)
+			}
+		}
+		{
+			_pay := _api.Group("/pay", _payMw()...)
+			_pay.POST("/", append(_createpayMw(), api.CreatePay)...)
+			_pay.GET("/", append(_paydetailMw(), api.PayDetail)...)
+			{
+				_notify := _pay.Group("/notify", _notifyMw()...)
+				_notify.POST("/", append(_paynotifyMw(), api.PayNotify)...)
+			}
+			{
+				_return := _pay.Group("/return", _returnMw()...)
+				_return.POST("/", append(_payreturnMw(), api.PayReturn)...)
+			}
+		}
+		{
+			_product := _api.Group("/product", _productMw()...)
+			_product.POST("/", append(_publishproductMw(), api.PublishProduct)...)
+			_product.PUT("/", append(_updateproductMw(), api.UpdateProduct)...)
+		}
+		{
+			_products := _api.Group("/products", _productsMw()...)
+			_products.DELETE("/", append(_delproductMw(), api.DelProduct)...)
+			_products.GET("/", append(_productdetailMw(), api.ProductDetail)...)
+			_products.GET("/favorite", append(_productfavoritelistMw(), api.ProductFavoriteList)...)
+			_products.GET("/published", append(_publishedproductsMw(), api.PublishedProducts)...)
+			{
+				_list0 := _products.Group("/list", _list0Mw()...)
+				_list0.GET("/", append(_productlistMw(), api.ProductList)...)
+			}
+			{
+				_search := _products.Group("/search", _searchMw()...)
+				_search.GET("/", append(_searchproductMw(), api.SearchProduct)...)
+			}
+		}
+		{
+			_register0 := _api.Group("/register", _register0Mw()...)
+			_register0.POST("/", append(_register1Mw(), api.Register)...)
+		}
 		{
 			_user := _api.Group("/user", _userMw()...)
-			_user.GET("/login", append(_loginMw(), api.Login)...)
+			{
+				_login0 := _user.Group("/login", _login0Mw()...)
+				_login0.GET("/", append(_login1Mw(), api.Login)...)
+			}
+		}
+		{
+			_verification := _api.Group("/verification", _verificationMw()...)
+			_verification.POST("/", append(_getverificationMw(), api.GetVerification)...)
 		}
 	}
 }

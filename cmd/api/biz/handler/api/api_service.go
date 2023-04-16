@@ -4,18 +4,28 @@ package api
 
 import (
 	"context"
+	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/order"
+	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/pay"
+	"github.com/cqqqq777/go-kitex-mall/shared/middleware"
+	"net/http"
+	"strconv"
+
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cqqqq777/go-kitex-mall/cmd/api/config"
+	"github.com/cqqqq777/go-kitex-mall/cmd/api/pkg"
+	"github.com/cqqqq777/go-kitex-mall/shared/consts"
 	"github.com/cqqqq777/go-kitex-mall/shared/errz"
+	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/merchant"
+	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/product"
 	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/user"
 	"github.com/cqqqq777/go-kitex-mall/shared/log"
 	"github.com/cqqqq777/go-kitex-mall/shared/response"
 
-	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cqqqq777/go-kitex-mall/cmd/api/biz/model/api"
 )
 
 // GetVerification .
-// @router /api/verification [POST]
+// @router /api/verification/ [POST]
 func GetVerification(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.MallVerificationResponse)
 
@@ -50,7 +60,7 @@ func GetVerification(ctx context.Context, c *app.RequestContext) {
 }
 
 // Register .
-// @router /api/register [POST]
+// @router /api/register/ [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.MallUserRegisterResponse)
 
@@ -88,7 +98,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 }
 
 // Login .
-// @router /api/user/login [GET]
+// @router /api/user/login/ [GET]
 func Login(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.MallUserLoginResponse)
 
@@ -120,4 +130,700 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	resp.Token = res.Token
 
 	response.SendResp(c, resp)
+
+}
+
+// MerchantRegister .
+// @router /api/merchant/register/ [POST]
+func MerchantRegister(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallMerchantRegisterResponse)
+
+	var err error
+	var req api.MallMerchantRegisterRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalMerchantClient.Register(ctx, &merchant.MallMerchantRegisterRequest{
+		Name:           req.Name,
+		Password:       req.Password,
+		Alipay:         req.Alipay,
+		Description:    req.Description,
+		InvitationCode: req.InvitationCode,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call merchant service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	// build response
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Token = res.Token
+
+}
+
+// MerchantLogin .
+// @router /api/merchant/login/ [GET]
+func MerchantLogin(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallMerchantLoginResponse)
+
+	var err error
+	var req api.MallMerchantLoginRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+
+	}
+
+	res, err := config.GlobalMerchantClient.Login(ctx, &merchant.MallMerchantLoginRequest{
+		Name:     req.Name,
+		Password: req.Password,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call merchant service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Token = res.Token
+
+	response.SendResp(c, resp)
+}
+
+// MerchantInfo .
+// @router api/merchant/info/ [GET]
+func MerchantInfo(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallMerchantGetInfoResponse)
+
+	var err error
+	var req api.MallMerchantGetInfoRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+	res, err := config.GlobalMerchantClient.GetInfo(ctx, &merchant.MallMerchantGetInfoRequest{
+		Id: req.ID,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call merchant service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Merchant = pkg.Merchant(res.MerchantInfo)
+
+	response.SendResp(c, resp)
+}
+
+// PublishProduct .
+// @router /api/product/ [POST]
+func PublishProduct(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallPublishProductResponse)
+
+	var err error
+	var req api.MallPublishProductRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalProductClient.PublishProduct(ctx, &product.MallPublishProductRequest{})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.ProductID = res.ProductId
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+
+	response.SendResp(c, resp)
+}
+
+// UpdateProduct .
+// @router /api/product/ [PUT]
+func UpdateProduct(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallUpdateProductResponse)
+
+	var err error
+	var req api.MallUpdateProductRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalProductClient.UpdateProduct(ctx, &product.MallUpdateProductRequest{
+		ProductId:   req.ProductID,
+		Price:       req.Price,
+		Name:        req.Name,
+		Description: req.Description,
+		Stock:       req.Stock,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+
+	response.SendResp(c, resp)
+}
+
+// DelProduct .
+// @router /api/products/ [DELETE]
+func DelProduct(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallDelProductResponse)
+
+	var err error
+	var req api.MallDelProductRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	merchantID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalProductClient.DelProduct(ctx, &product.MallDelProductRequest{
+		MerchantId: merchantID.(int64),
+		ProductId:  req.ProductID,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+
+	response.SendResp(c, resp)
+}
+
+// ProductList .
+// @router /api/products/list/ [GET]
+func ProductList(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallProductListResponse)
+
+	var err error
+	var req api.MallProductListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+	res, err := config.GlobalProductClient.ProductList(ctx, &product.MallProductListRequest{
+		Page:     req.Page,
+		PageSize: req.PageSize,
+		Sort:     req.Sort,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Products = pkg.Products(res.Products)
+
+	response.SendResp(c, resp)
+}
+
+// ProductDetail .
+// @router /api/products/ [GET]
+func ProductDetail(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallProductDetailResponse)
+
+	var err error
+	var req api.MallProductDetailRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	var userID int64
+	if req.Token != "" {
+		j := middleware.NewJWT(config.GlobalServerConfig.JWTInfo.SigningKey)
+		claim, err := j.ParseToken(req.Token)
+		if err != nil || claim.Identity != consts.UserIdentity {
+			resp.Code = errz.CodeTokenInvalid
+			resp.Msg = errz.MsgInvalidToken
+			response.SendResp(c, resp)
+			return
+		}
+		userID = claim.ID
+	}
+
+	res, err := config.GlobalProductClient.ProductDetail(ctx, &product.MallProductDetailRequest{
+		ProductId: req.ProductID,
+		UserId:    userID,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Product = pkg.ProductDetail(res.Product)
+
+	response.SendResp(c, resp)
+}
+
+// SearchProduct .
+// @router /api/products/search/ [GET]
+func SearchProduct(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallSearchProductResponse)
+
+	var err error
+	var req api.MallSearchProductRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalProductClient.SearchProduct(ctx, &product.MallSearchProductRequest{
+		Key: req.Key,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Products = pkg.Products(res.Products)
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+
+	response.SendResp(c, resp)
+}
+
+// ProductFavoriteList .
+// @router /api/products/favorite [GET]
+func ProductFavoriteList(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallProductFavoriteListResponse)
+
+	var err error
+	var req api.MallProductFavoriteListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	userID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalProductClient.ProductFavoriteList(ctx, &product.MallProductFavoriteListRequest{
+		UserId: userID.(int64),
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Products = pkg.Products(res.Products)
+
+	response.SendResp(c, resp)
+}
+
+// PublishedProducts .
+// @router /api/products/published [GET]
+func PublishedProducts(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallProductPublishedListResponse)
+
+	var err error
+	var req api.MallProductPublishedListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	merchantID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalProductClient.PublishedProducts(ctx, &product.MallProductPublishedListRequest{
+		MerchantId: merchantID.(int64),
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Products = pkg.Products(res.Products)
+
+	response.SendResp(c, resp)
+}
+
+// CreateOrder .
+// @router /api/order/ [POST]
+func CreateOrder(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallCreateOrderResponse)
+
+	var err error
+	var req api.MallCreateOrderRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	userID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalOrderClient.CreateOrder(ctx, &order.MallCreateOrderRequest{
+		UserId:     userID.(int64),
+		ProductId:  req.ProductID,
+		Amount:     req.Amount,
+		ProductNum: req.ProductNum,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call order service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.OrderID = res.OrderId
+	resp.Amount = res.Amount
+
+	response.SendResp(c, resp)
+}
+
+// OrderList .
+// @router /api/orders/list/ [GET]
+func OrderList(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallOrderListResponse)
+
+	var err error
+	var req api.MallOrderListRequset
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	userID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalOrderClient.OrderList(ctx, &order.MallOrderListRequset{
+		UserId: userID.(int64),
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call order service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Orders = pkg.Orders(res.Orders)
+
+}
+
+// GetOrder .
+// @router /api/orders/ [GET]
+func GetOrder(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallGetOrderResponse)
+
+	var err error
+	var req api.MallGetOrderRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	userID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalOrderClient.GetOrder(ctx, &order.MallGetOrderRequest{
+		OrderId: req.OrderID,
+		UserId:  userID.(int64),
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call order service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Order = pkg.Order(res.Order)
+}
+
+// CreatePay .
+// @router /api/pay/ [POST]
+func CreatePay(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallCreatePayResponse)
+
+	var err error
+	var req api.MallCreatePayRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	userID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalPayClient.CreatePay(ctx, &pay.MallCreatePayRequest{
+		OrderId: req.OrderID,
+		Amount:  req.Amount,
+		UserId:  userID.(int64),
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call pay service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.PayID = res.PayId
+	resp.URL = res.Url
+
+	response.SendResp(c, resp)
+}
+
+// PayDetail .
+// @router /api/pay/ [GET]
+func PayDetail(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallPayDetailResponse)
+
+	var err error
+	var req api.MallPayDetailRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	_, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalPayClient.PayDetail(ctx, &pay.MallPayDetailRequest{
+		PayId: req.PayID,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call pay service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+	resp.Pay = pkg.Pay(res.Pay)
+
+	response.SendResp(c, resp)
+}
+
+// PayReturn .
+// @router /api/pay/return/ [POST]
+func PayReturn(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.MallPayReturnResponse)
+
+	var err error
+	var req api.MallPayReturnRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.Code = errz.CodeInvalidParam
+		resp.Msg = errz.MsgInvalidParam
+		response.SendResp(c, resp)
+		return
+	}
+
+	userID, ok := c.Get(consts.AccountID)
+	if !ok {
+		resp.Code = errz.CodeServiceBusy
+		resp.Msg = errz.MsgServiceBusy
+		response.SendResp(c, resp)
+		return
+	}
+
+	res, err := config.GlobalPayClient.PayReturn(ctx, &pay.MallPayReturnRequest{
+		PayId:   req.PayID,
+		Amount:  req.Amount,
+		OrderId: req.OrderID,
+		Status:  req.Status,
+		UserId:  userID.(int64),
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call pay service failed err:%s", err.Error())
+		resp.Code = errz.CodeRpcCall
+		resp.Msg = errz.MsgRpcCall
+		response.SendResp(c, resp)
+		return
+	}
+
+	resp.Code = res.CommonResp.Code
+	resp.Msg = res.CommonResp.Msg
+
+	response.SendResp(c, resp)
+}
+
+// PayNotify .
+// @router /api/pay/notify/ [POST]
+func PayNotify(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.MallPayNotifyRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(http.StatusOK, errz.FailMsg)
+		return
+	}
+	if req.Status != "TRADE_CLOSED" {
+		c.String(http.StatusOK, errz.FailMsg)
+		return
+	}
+
+	orderId, _ := strconv.ParseInt(req.OrderID, 10, 64)
+	PayId, _ := strconv.ParseInt(req.PayID, 10, 64)
+	res, err := config.GlobalPayClient.PayNotify(ctx, &pay.MallPayNotifyRequest{
+		OrderId: orderId,
+		PayId:   PayId,
+		Status:  consts.StatusCancel,
+	})
+	if err != nil {
+		log.Zlogger.Errorf("rpc call pay service failed err:%s", err.Error())
+		c.String(http.StatusOK, errz.FailMsg)
+		return
+	}
+
+	if res.CommonResp.Code != errz.Success {
+		log.Zlogger.Errorf("pay service error err:%s", res.CommonResp.Msg)
+		c.String(http.StatusOK, errz.FailMsg)
+		return
+	}
+
+	c.String(http.StatusOK, errz.SuccessMsg)
 }

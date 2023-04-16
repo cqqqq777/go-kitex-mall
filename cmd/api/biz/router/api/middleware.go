@@ -4,6 +4,8 @@ package api
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cqqqq777/go-kitex-mall/cmd/api/config"
+	"github.com/cqqqq777/go-kitex-mall/shared/middleware"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -16,12 +18,194 @@ func _apiMw() []app.HandlerFunc {
 	return nil
 }
 
+func _merchantMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _infoMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _merchantinfoMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _loginMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _merchantloginMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
 func _registerMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
 
-func _getverificationMw() []app.HandlerFunc {
+func _merchantregisterMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _orderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _createorderMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _ordersMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getorderMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _listMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _orderlistMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _payMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _createpayMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _paydetailMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _notifyMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _paynotifyMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _returnMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _payreturnMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _productMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _publishproductMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _updateproductMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productsMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _delproductMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _productdetailMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productfavoritelistMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _publishedproductsMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		middleware.JwtAuth(config.GlobalServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _list0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productlistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _searchMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _searchproductMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _register0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _register1Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
@@ -31,7 +215,22 @@ func _userMw() []app.HandlerFunc {
 	return nil
 }
 
-func _loginMw() []app.HandlerFunc {
+func _login0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _login1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _verificationMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getverificationMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

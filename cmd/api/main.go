@@ -3,12 +3,34 @@
 package main
 
 import (
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cqqqq777/go-kitex-mall/cmd/api/config"
+	"github.com/cqqqq777/go-kitex-mall/cmd/api/initialize"
+	"github.com/cqqqq777/go-kitex-mall/cmd/api/initialize/rpc"
+	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
+	"github.com/hertz-contrib/pprof"
 )
 
 func main() {
-	h := server.Default()
+	// init
+	r, info := initialize.InitNacos()
+	tracer, cfg := hertztracing.NewServerTracer()
+	rpc.Init()
 
+	// TODO ADD NSQ
+
+	// create a new server
+	h := server.New(
+		tracer,
+		server.WithHostPorts(fmt.Sprintf(":%d", config.GlobalServerConfig.Port)),
+		server.WithRegistry(r, info),
+		server.WithHandleMethodNotAllowed(true),
+	)
+
+	// use pprof & tracer mw
+	pprof.Register(h)
+	h.Use(hertztracing.ServerMiddleware(cfg))
 	register(h)
 	h.Spin()
 }

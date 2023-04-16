@@ -3,6 +3,8 @@ package errz
 const (
 	Success    int64 = 0
 	SuccessMsg       = "success"
+
+	FailMsg = "fail"
 )
 
 const (
@@ -10,11 +12,14 @@ const (
 	CodeTokenInvalid
 	CodeNoPermission
 	CodeRpcCall
+	CodeServiceBusy
 )
 
 const (
 	MsgInvalidParam = "invalid param"
 	MsgRpcCall      = "rpc call failed"
+	MsgServiceBusy  = "service busy"
+	MsgInvalidToken = "invalid token"
 )
 
 const (

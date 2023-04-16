@@ -28,7 +28,7 @@ func newClient() (*alipay.Client, error) {
 	return client, nil
 }
 
-func Pay(orderID, amount int64) (string, error) {
+func Pay(payID, orderID, amount int64) (string, error) {
 	client, err := newClient()
 	if err != nil {
 		return "", err
@@ -43,7 +43,7 @@ func Pay(orderID, amount int64) (string, error) {
 		return "", err
 	}
 	pay := alipay.TradePagePay{}
-	pay.Subject = "支付"
+	pay.Subject = fmt.Sprintf("%d", payID)
 	pay.OutTradeNo = strconv.FormatInt(orderID, 10)
 	pay.ProductCode = "FAST_INSTANT_TRADE_PAY"
 	pay.TotalAmount = fmt.Sprintf("%.2f", float64(amount)/100)

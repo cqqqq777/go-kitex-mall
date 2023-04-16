@@ -73,9 +73,10 @@ func (s *PayServiceImpl) CreatePay(ctx context.Context, req *pay.MallCreatePayRe
 		log.Zlogger.Errorf("generate pay id failed err:%s", err.Error())
 		return resp, nil
 	}
+	payID := sf.Generate().Int64()
 
 	// create pay
-	url, err := pkg.Pay(req.OrderId, req.Amount)
+	url, err := pkg.Pay(payID, req.OrderId, req.Amount)
 	if err != nil {
 		resp.CommonResp = response.NewCommonResp(errz.ErrGenerateAlipay)
 		log.Zlogger.Errorf("generate alipay failed err:%s", err.Error())
@@ -84,7 +85,7 @@ func (s *PayServiceImpl) CreatePay(ctx context.Context, req *pay.MallCreatePayRe
 
 	// create in mysql
 	payInfo := new(model.Pay)
-	payInfo.PayID = sf.Generate().Int64()
+	payInfo.PayID = payID
 	payInfo.OrderID = req.OrderId
 	payInfo.UserID = req.UserId
 	payInfo.Amount = req.Amount

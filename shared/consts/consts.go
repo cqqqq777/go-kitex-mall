@@ -108,6 +108,7 @@ const (
 	OperateGroup  = "OPERATE_GROUP"
 	ProductGroup  = "PRODUCT_GROUP"
 	OrderGroup    = "ORDER_GROUP"
+	PayGroup      = "PAY_GROUP"
 )
 
 const (
