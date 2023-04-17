@@ -37,6 +37,34 @@ struct mall_user_login_response{
     3: string token
 }
 
+struct mall_get_user_info_request{
+    1: i64 id(api.query="id")
+}
+
+struct mall_get_user_info_response{
+    1: i64 code
+    2: string msg
+    3: common.User user_info
+}
+
+struct mall_change_user_avatar_request{
+    1:string token(api.query="token")
+}
+
+struct mall_change_user_avatar_response{
+    1: i64 code
+    2: string msg
+}
+
+struct mall_change_user_background_request{
+    1:string token(api.query="token")
+}
+
+struct mall_change_user_background_response{
+    1: i64 code
+    2: string msg
+}
+
 struct mall_merchant_register_request{
     1: string name(api.query="name", api.vd="len($)>0 && len($)<33")
     2: string password(api.query="password", api.vd="len($)>0 && len($)<33")
@@ -261,6 +289,9 @@ service ApiService {
     mall_verification_response GetVerification(1: mall_verification_request req)(api.post="/api/verification/")
     mall_user_register_response Register(1: mall_user_register_request req)(api.post="/api/register/")
     mall_user_login_response Login(1: mall_user_login_request req)(api.get="/api/user/login/")
+    mall_get_user_info_response GetUserInfo(1: mall_get_user_info_request req)
+    mall_change_user_avatar_response ChangeAvatar(1: mall_change_user_avatar_request req)
+    mall_change_user_background_response ChangeBackground(1: mall_change_user_background_request req)
 
     mall_merchant_register_response MerchantRegister(1: mall_merchant_register_request req)(api.post="/api/merchant/register/")
     mall_merchant_login_response MerchantLogin(1: mall_merchant_login_request req)(api.get="/api/merchant/login/")

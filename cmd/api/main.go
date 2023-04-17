@@ -8,6 +8,7 @@ import (
 	"github.com/cqqqq777/go-kitex-mall/cmd/api/config"
 	"github.com/cqqqq777/go-kitex-mall/cmd/api/initialize"
 	"github.com/cqqqq777/go-kitex-mall/cmd/api/initialize/rpc"
+	initialize2 "github.com/cqqqq777/go-kitex-mall/cmd/api/pkg/upload/initialize"
 	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
 	"github.com/hertz-contrib/pprof"
 )
@@ -18,7 +19,11 @@ func main() {
 	tracer, cfg := hertztracing.NewServerTracer()
 	rpc.Init()
 
-	// TODO ADD NSQ
+	// init upload service
+	uploadServer := initialize2.Init()
+	go func() {
+		uploadServer.UploadFile()
+	}()
 
 	// create a new server
 	h := server.New(

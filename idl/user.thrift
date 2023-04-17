@@ -36,7 +36,7 @@ struct mall_user_login_response{
 }
 
 struct mall_get_user_info_request{
-    1:i64 id //user_id
+    1:i64 id //user_idget_
 }
 
 struct mall_get_user_info_response{
