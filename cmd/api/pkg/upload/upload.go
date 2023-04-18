@@ -36,11 +36,11 @@ func NewUploadServer(config *config.UploadServiceConfig, minioClient *minio.Clie
 
 func (s *Server) UploadFile() {
 	host := fmt.Sprintf("%s:%d", config.GlobalServiceConfig.NsqInfo.Host, config.GlobalServiceConfig.NsqInfo.Port)
+	s.consumer.AddHandler(nsq.HandlerFunc(pkg.HandleMsg))
 	err := s.consumer.ConnectToNSQD(host)
 	if err != nil {
 		log.Zlogger.Fatal("connect to nsqd failed err:", err)
 	}
-	s.consumer.AddHandler(nsq.HandlerFunc(pkg.HandleMsg))
 	for {
 		select {
 		case body := <-s.ch:

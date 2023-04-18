@@ -6,6 +6,7 @@ import (
 )
 
 func Init() *upload.Server {
+	initConfig()
 	consumer := newConsumer()
 	minioClient := newMinio()
 	config.GlobalChannel = make(chan []byte, 1)

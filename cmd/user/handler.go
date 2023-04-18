@@ -167,8 +167,15 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.MallUserRegist
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(ctx context.Context, req *user.MallUserLoginRequest) (resp *user.MallUserLoginResponse, err error) {
 	// TODO: Your code here...
+	resp = new(user.MallUserLoginResponse)
+
 	// check password
 	usr, err := s.Dao.GetUserByUsername(req.Username)
+	if err != nil {
+		resp.CommonResp = response.NewCommonResp(errz.ErrUserInternal)
+		log.Zlogger.Errorf("find user by username failed err:%s", err.Error())
+		return resp, nil
+	}
 	req.Password = pkg.Md5(req.Password)
 	if usr.Password != req.Password {
 		resp.CommonResp = response.NewCommonResp(errz.ErrWrongPassword)
