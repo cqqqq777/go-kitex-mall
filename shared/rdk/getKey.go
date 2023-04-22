@@ -29,3 +29,11 @@ func GetProductSale(id int64) string {
 func GetSetOrderKey(id int64) string {
 	return Prefix + strconv.FormatInt(id, 10) + RKSetOrder
 }
+
+func GetCartKey(id int64) string {
+	return Prefix + strconv.FormatInt(id, 10) + RKCart
+}
+
+func GetCartProductKey(id int64) string {
+	return Prefix + strconv.FormatInt(id, 10) + RKCartProduct
+}

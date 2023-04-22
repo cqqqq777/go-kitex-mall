@@ -11,4 +11,6 @@ const (
 	RKFavoriteProduct    = ":favorite:product"
 	RKProductSaleNum     = ":product:sale"
 	RKSetOrder           = ":order"
+	RKCart               = ":cart"
+	RKCartProduct        = ":cart:product"
 )

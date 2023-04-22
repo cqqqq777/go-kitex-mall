@@ -79,3 +79,16 @@ struct Pay{
     7: i8 status
     8: string url
 }
+
+struct cart_product{
+    1: i64 product_id
+    2: i64 merchant_id
+    3: i64 product_num
+    4: i64 amount
+    5: i64 add_time
+    6: bool is_invalid
+}
+
+struct cart {
+    1: list<cart_product> cart_products
+}

@@ -145,3 +145,17 @@ var (
 	ErrAmountWrong    = NewErrZ(WithCode(CodeAmountWrong), WithMsg("wrong amount"))
 	ErrGenerateAlipay = NewErrZ(WithCode(CodeGenerateAlipay), WithMsg("generate alipay failed"))
 )
+
+const (
+	CodeCartService int64 = 80000 + iota
+
+	CodeeAddProductToCart
+	CodeGetCart
+)
+
+var (
+	ErrCartInternal = NewErrZ(WithCode(CodeCartService), WithMsg("cart service busy"))
+
+	ErrAddProductToCart = NewErrZ(WithCode(CodeeAddProductToCart), WithMsg("add product to cart failed"))
+	ErrGetCart          = NewErrZ(WithCode(CodeGetCart), WithMsg("get cart failed"))
+)
