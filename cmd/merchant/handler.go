@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/common"
 	"time"
 
 	"github.com/cqqqq777/go-kitex-mall/cmd/merchant/dao"
@@ -126,6 +127,7 @@ func (s *MerchantServiceImpl) GetInfo(ctx context.Context, req *merchant.MallMer
 	}
 
 	// build response
+	resp.MerchantInfo = new(common.Merchant)
 	resp.MerchantInfo.Id = m.Id
 	resp.MerchantInfo.Name = m.Name
 	resp.MerchantInfo.Alipay = m.Alipay

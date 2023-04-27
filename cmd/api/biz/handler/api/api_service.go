@@ -4,6 +4,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/order"
 	"github.com/cqqqq777/go-kitex-mall/shared/kitex_gen/pay"
 	"github.com/cqqqq777/go-kitex-mall/shared/middleware"
@@ -145,6 +146,7 @@ func MerchantRegister(ctx context.Context, c *app.RequestContext) {
 		resp.Code = errz.CodeInvalidParam
 		resp.Msg = errz.MsgInvalidParam
 		response.SendResp(c, resp)
+		fmt.Println(err)
 		return
 	}
 
@@ -168,6 +170,7 @@ func MerchantRegister(ctx context.Context, c *app.RequestContext) {
 	resp.Msg = res.CommonResp.Msg
 	resp.Token = res.Token
 
+	response.SendResp(c, resp)
 }
 
 // MerchantLogin .
@@ -194,11 +197,17 @@ func MerchantLogin(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp.Code = res.CommonResp.Code
-	resp.Msg = res.CommonResp.Msg
-	resp.Token = res.Token
+	//resp.Code = res.CommonResp.Code
+	//resp.Msg = res.CommonResp.Msg
+	//resp.Token = res.Token
 
-	response.SendResp(c, resp)
+	var respMap = make(map[string]interface{})
+	respMap["code"] = res.CommonResp.Code
+	respMap["msg"] = res.CommonResp.Msg
+	respMap["id"] = res.Id
+	respMap["token"] = res.Token
+
+	response.SendResp(c, respMap)
 }
 
 // MerchantInfo .
@@ -248,7 +257,13 @@ func PublishProduct(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res, err := config.GlobalProductClient.PublishProduct(ctx, &product.MallPublishProductRequest{})
+	res, err := config.GlobalProductClient.PublishProduct(ctx, &product.MallPublishProductRequest{
+		MerchantId:  req.MerchantID,
+		Price:       req.Price,
+		Stock:       req.Stock,
+		Description: req.Description,
+		Name:        req.Name,
+	})
 	if err != nil {
 		log.Zlogger.Errorf("rpc call product service failed err:%s", err.Error())
 		resp.Code = errz.CodeRpcCall

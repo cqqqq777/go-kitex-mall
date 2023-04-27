@@ -36,8 +36,7 @@ func (p *Product) CreateProduct(ctx context.Context, product *model.ProductBasic
 	// create index
 	indexModel := mongo.IndexModel{
 		Keys: bson.M{
-			"name":        "text",
-			"description": "text",
+			"name": "text",
 		},
 	}
 	_, err := p.mdb.Collection(consts.CollectionProducts).Indexes().CreateOne(ctx, indexModel)
