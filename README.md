@@ -14,8 +14,6 @@ The mall/eshop system based on kitex and hertz
 - The message queue: [Nsq](https://nsq.io/)
 - The object storage service: [Minio](https://min.io/)
 - Traceing: Yaeger
-- Monitoring: Prometheus 
-- Permission Management: Casbin
 
 ### Function
 
