@@ -1,4 +1,5 @@
 # go-kitex-mall
+English | [中文](https://github.com/cqqqq777/go-kitex-mall/blob/main/README_cn.md)
 The mall/eshop system based on kitex and hertz
 
 ## Project Implementation
