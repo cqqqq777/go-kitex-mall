@@ -58,7 +58,7 @@
 
 ### 调用关系
 
-![image-20230517222011136](C:\Users\86132\AppData\Roaming\Typora\typora-user-images\image-20230517222011136.png)
+![image-20230517222011136](https://github.com/cqqqq777/go-kitex-mall/blob/main/images/image-20230517222011136.png)
 
 
 
